@@ -22,9 +22,19 @@ typedef long long ll;
 class SkiResortsEasy {
 	public:
 	int minCost(vector <int> altitude) {
-		
+		int ret=0;
+		int now=altitude[0];
+
+		for(int i=1; i<altitude.size(); ++i){
+			if(now<altitude[i]){
+				ret += altitude[i]-now;
+			}
+			else now=altitude[i];
+		}
+
+		return ret;
 	}
-	
+
 // BEGIN CUT HERE
 	public:
 	void run_test(int Case) { if ((Case == -1) || (Case == 0)) test_case_0(); if ((Case == -1) || (Case == 1)) test_case_1(); if ((Case == -1) || (Case == 2)) test_case_2(); if ((Case == -1) || (Case == 3)) test_case_3(); if ((Case == -1) || (Case == 4)) test_case_4(); }
@@ -45,4 +55,4 @@ int main(){
 	SkiResortsEasy ___test;
 	___test.run_test(-1);
 }
-// END CUT HERE 
+// END CUT HERE
