@@ -1,67 +1,132 @@
-//未完成
-#include <algorithm>
-#include <cstdio>
 #include <iostream>
-#include <stack>
+#include <string>
 #include <vector>
+#include <queue>
+#include <stack>
+#include <map>
+#include <algorithm>
+#include <set>
+#include <sstream>
+#include <utility>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <cmath>
+#include <cctype>
+#include <climits>
 using namespace std;
+
+typedef long long ll;
+#define FOR(i,a,b) for(int i=(a);i<(b);++i)
+#define REP(i,n) for(int i=0;i<(n);++i)
+#define foreach(itr,c) for(__typeof(c.begin()) itr=c.begin(); itr!=c.end(); itr++)
+
+/******************************
+ LCA.cpp  START
+******************************/
+
+/******************************
+ Lowest Common Ancestor
+ 木において最も近い共通祖先を求める
+******************************/
+
+//SETTING
+
+//型設定(int?long?ll?)
+typedef int lca_t;
+
+//ノードの個数
+const lca_t MAX_V = 100000;
+//ダブリングに必要なサイズ(log(MAX_V))
+const lca_t MAX_LOG_V = 20;
+//木の隣接リスト表現
+vector<lca_t> G[MAX_V];
+//根のノード番号
+lca_t root = 0;
+
+//親を2^k回辿って到達するノード(根を通り過ぎる場合,-1)
+int parent[MAX_LOG_V][MAX_V];
+//根からの深さ
+int depth[MAX_V];
+
+//現在vに注目、親はp、深さd
+void lca_dfs(lca_t v, lca_t p, lca_t d){
+  parent[0][v]=p;
+  depth[v]=d;
+  for(lca_t i=0; i<G[v].size(); ++i){
+    if(G[v][i]!=p){ //親でなければ子
+      lca_dfs(G[v][i], v, d+1);
+    }
+  }
+}
+
+//初期化
+void lca_init(lca_t V){
+  //parent[0]とdepthの初期化
+  lca_dfs(root, -1, 0);
+  //parentの初期化
+  for(lca_t k=0; k+1<MAX_LOG_V; ++k){
+    for(lca_t v=0; v<V; ++v){
+      if(parent[k][v] < 0) parent[k+1][v]=-1;
+      else parent[k+1][v] = parent[k][parent[k][v]];
+    }
+  }
+}
+
+//uとvのLCAを求める
+lca_t lca(lca_t u, lca_t v){
+  //uとvの深さが同じになるまで親を辿る
+  if(depth[u] > depth[v]) swap(u,v);
+  for(lca_t k=0; k<MAX_LOG_V; ++k){
+    if((depth[v]-depth[u])>>k & 1){
+      v = parent[k][v];
+    }
+  }
+
+  if(u==v) return u;
+
+  //二分探索でLCAを求める
+  for(lca_t k=MAX_LOG_V-1; k>=0; --k){
+    if(parent[k][u] != parent[k][v]){
+      u=parent[k][u];
+      v=parent[k][v];
+    }
+  }
+
+  return parent[0][u];
+}
+
+
+/******************************
+ LCA.cpp  END
+******************************/
+
+
 
 int main(){
 	int n;
-	vector<int> G[100000]; //隣接リスト
-		
-	cin >> n;
-	n;
+	cin >>n;
+
 	for(int i=0; i<n-1; ++i){
 		int x, y;
 		scanf(" %d %d", &x, &y);
-		x--;
-		y--;
+		--x;
+		--y;
 		G[x].push_back(y);
 		G[y].push_back(x);
 	}
-	
-	int depth[100000]; //頂点0を根とした時の頂点iの深さ
-	depth[0]=0;
-	bool visit[100000];
-	fill(visit, visit+n, false);
-	visit[0]=true;
-	
-	int d=0; //今いる位置の深さ
-	//DFS
-	stack<int> st;
-	st.push(0);
-	while(!st.empty()){
-		int p = st.top();
-		st.pop();
-		for(int i=0; i<G[p].size(); ++i){
-			if(!visit[ G[p][i] ]){
-				st.push(G[p][i]);	
-				//printf(" push %d\n", G[p][i]);
-				visit[G[p][i]]=true;
-				depth[G[p][i]]=d+1;
-			}
-		}	
-		
-		if(G[p].size()==0) d--;
-		else d++;
-	}
-	
-	for(int i=0; i<n; ++i) printf("depth[%d] = %d\n", i, depth[i]);
-	
+
+	//LCA初期設定
+	lca_init(n);
+
 	int q;
 	cin >> q;
-	for(int i=0; i<q; ++i){
-		int a,b;		
+	for(int Q=0; Q<q; ++Q){
+		int a,b;
 		scanf(" %d %d", &a, &b);
-		
-		//lowest common ancestorを使う
-
-
-		
-		
-		
-		printf("%d\n", depth[a-1]+depth[b-1]+1);
+		--a;
+		--b;
+		printf("%d\n", depth[a]+depth[b]+1-2*depth[lca(a,b)]);
 	}
 
 }
