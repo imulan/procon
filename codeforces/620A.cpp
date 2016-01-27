@@ -21,8 +21,17 @@ typedef long long ll;
 #define REP(i,n) for(int i=0;i<(n);++i)
 #define foreach(itr,c) for(__typeof(c.begin()) itr=c.begin(); itr!=c.end(); itr++)
 
-int main(){
+long ab(long p){
+  return (p>0)?p:-p;
+}
 
+int main(int argc, char const *argv[]) {
+  long x1,y1,x2,y2;
 
+  cin >>x1 >>y1 >>x2 >>y2;
 
+  long dx=ab(x1-x2), dy=ab(y1-y2);
+
+  std::cout << max(dx,dy) << std::endl;
+  return 0;
 }

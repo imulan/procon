@@ -2,7 +2,7 @@ import java.util.*;
 import java.io.*;
 import java.math.*;
 
-public class C{
+public class 592C{
 
 	public static BigInteger gcd(BigInteger p,BigInteger q){
 		if( (p.remainder(q)).equals(BigInteger.ZERO)) return q;
