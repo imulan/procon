@@ -1,0 +1,10 @@
+*.in
+*.out
+.DS_Store
+/topcoder/contestapplet.conf
+/topcoder/contestapplet.conf.bak
+/topcoder/ContestAppletProd.jnlp
+/topcoder/Greed-2.0-RC-7.1.0.jar
+/topcoder/SRM/**/*.html
+/topcoder/SRM/**/*.sample
+/topcoder/SRM/**/*.bak.0

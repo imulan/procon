@@ -1,0 +1,48 @@
+#include <iostream>
+#include <string>
+#include <vector>
+#include <queue>
+#include <stack>
+#include <map>
+#include <algorithm>
+#include <set>
+#include <sstream>
+#include <utility>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <cmath>
+#include <cctype>
+#include <climits>
+using namespace std;
+
+typedef long long ll;
+#define FOR(i,a,b) for(int i=(a);i<(b);++i)
+#define REP(i,n) for(int i=0;i<(n);++i)
+#define foreach(itr,c) for(__typeof(c.begin()) itr=c.begin(); itr!=c.end(); itr++)
+
+int main(int argc, char const *argv[]) {
+  int p;
+  cin >>p;
+  for(int T=0; T<p; ++T){
+    int n,k;
+    cin >>n >>k;
+
+    bool win;
+    if(n<k){
+      if(n==1) win=false;
+      else win=true;
+    }
+    else{
+      if(n%(k+1)==1) win=false;
+      else win=true;
+    }
+
+    string ans;
+    if(win) ans="Win";
+    else ans="Lose";
+
+    std::cout << ans << std::endl;
+  }
+  return 0;
+}

@@ -1,128 +1,114 @@
-//最小の距離がうまくも止まらない
-
-#include <cstdio>
-#include <cstring>
-#include <iostream>
-#include <queue>
+#include <bits/stdc++.h>
 using namespace std;
 
-const long INF=1000000000;
+typedef long long ll;
+#define rep(i,n) for(i=0;i<n;++i)
+#define each(itr,c) for(__typeof(c.begin()) itr=c.begin(); itr!=c.end(); ++itr)
+#define mp make_pair
+#define pb push_back
+#define fi first
+#define sc second
 
-typedef struct{
-	int num;
-	int x;
-	int y;
-}building;
+struct building{ int b,x,y; };
+struct edge{ int to; double cost; };
+typedef pair<double,int> pi;
 
-int sqMove(building p, building q){
-	int dx=p.x-q.x;
-	int dy=p.y-q.y;
-	
-	//距離が50以下なら移動可
-	int ret=dx*dx+dy*dy;
-	if(ret > 50*50) ret=-1;
-	
-	return ret;
+const double INF=1e20;
+
+long dist2(building A, building B)
+{
+	return (long)(A.x-B.x)*(A.x-B.x)+(long)(A.y-B.y)*(A.y-B.y);
 }
 
-int main(){
-	while(1){
+int main()
+{
+	int i,j;
+	while(1)
+	{
 		int n;
-		long b[1001][1001];
-		building a[1000];
-						
-		scanf(" %d", &n);
+		cin >>n;
 		if(n==0) break;
-		for(int i=0; i<n; ++i)
-			scanf(" %d %d %d", &a[i].num, &a[i].x, &a[i].y);
-		
-		//初期化
-		memset(b, -1, sizeof(b));
-		
-		//接続されていたらコストは距離の2乗	
-		for(int i=0; i<n; ++i){
-			b[a[i].num][a[i].num]=0;
-			for(int j=i+1; j<n; ++j){
-				int dist=sqMove(a[i], a[j]);
-				b[a[i].num][a[j].num]=dist;	
-				b[a[j].num][a[i].num]=dist;	
+
+		vector<building> v(n);
+		rep(i,n)
+		{
+			scanf(" %d %d %d",&v[i].b,&v[i].x,&v[i].y);
+			--v[i].b;
+		}
+
+		//be connected?
+		vector<edge> G[1000];
+		rep(i,n)rep(j,i)
+		{
+			if(dist2(v[i],v[j])<=50*50)
+			{
+				G[v[i].b].pb(edge{v[j].b,sqrt(dist2(v[i],v[j]))});
+				G[v[j].b].pb(edge{v[i].b,sqrt(dist2(v[i],v[j]))});
 			}
 		}
-		
-		//クエリの処理
+
 		int m;
-		scanf(" %d", &m);
-		for(int i=0; i<m; ++i){
-			int s, g;
-			scanf(" %d %d", &s, &g);
-			
-			//ダイクストラ法
-			long d[1001];
-			int prev[1001];
-			
-			for(int j=0; j<=1000; ++j) d[j]=INF;
-			d[s]=0;
-			memset(prev, -1, sizeof(prev));
-			
-			queue<int> que;
-			bool remain[1001]; //探索対象になっているか
-			for(int j=0; j<=1000; ++j) remain[j]=false;
-			
-			for(int j=0; j<n; ++j){
-				que.push(a[j].num);
-				remain[a[j].num]=true;
-			}
-			
-			int ct=0;
-			while(ct<n){
-				int pp=-1;
-				int min=INF;
-				
-				for(int j=0; j<n; ++j){	
-					int nj=a[j].num;
-					if(remain[nj]){
-						if(min>d[nj]){
-							pp=nj;	
-							min=d[nj];
-						}
-					}	
-				}
-				
-				int u=pp;
-				remain[u]=false;
-				
-				for(int j=0; j<n; ++j){
-					int nj=a[j].num;
-					if(b[u][nj]>0 && d[nj]>d[u]+b[u][nj]){		
-						d[nj]=d[u]+b[u][nj];
-						prev[nj]=u;	
+		cin >>m;
+		rep(i,m)
+		{
+			int s,g;
+			scanf(" %d %d",&s,&g);
+			--s;
+			--g;
+
+			double dist[1000];
+			fill(dist,dist+1000,INF);
+			dist[s]=0;
+			int par[1000];
+			fill(par,par+1000,-1);
+
+			//dijkstra
+			priority_queue<pi,vector<pi>,greater<pi>> que;
+			que.push(pi(0,s));
+			while(!que.empty())
+			{
+				pi p=que.top();
+				que.pop();
+				int v=p.sc;
+				if(dist[v]<p.fi) continue;
+
+				rep(j,(int)G[v].size())
+				{
+					edge e=G[v][j];
+					if(dist[e.to]>dist[v]+e.cost)
+					{
+						//printf("%d -> %d\n",v,G[v][j]);
+						dist[e.to]=dist[v]+e.cost;
+						par[e.to]=v;
+						que.push(pi(dist[e.to],e.to));
 					}
 				}
-				//printf(" pp=%d\n", pp);
-				ct++;
 			}
-			
-			if(d[g]==INF) printf("NA\n");
-			else{
-				int now=1;
-				int ans[1000];
-				ans[0]=g;
-				
-				int bb=g;
-				while(prev[bb] != s){
-					ans[now++]=prev[bb];	
-					bb=prev[bb];
-				}
-				ans[now]=s;
-				
-				for(int i=now; i>=0; --i){
-					if(i!=now) printf(" ");	
-					printf("%d", ans[i]);
+
+			//search parent
+			vector<int> ans;
+			ans.pb(g+1);
+			int now=g;
+			while(par[now]!=-1)
+			{
+				ans.pb(par[now]+1);
+				now=par[now];
+			}
+
+			reverse(ans.begin(),ans.end());
+
+			//output
+			if(ans[0]!=s+1) printf("NA\n");
+			else
+			{
+				rep(j,(int)ans.size())
+				{
+					if(j) printf(" ");
+					printf("%d", ans[j]);
 				}
 				printf("\n");
 			}
-			
 		}
-		
+
 	}
 }

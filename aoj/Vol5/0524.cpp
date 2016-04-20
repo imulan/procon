@@ -1,49 +1,62 @@
-#include <algorithm>
-#include <cstdio>
-#include <cstring>
-#include <iostream>
+#include <bits/stdc++.h>
 using namespace std;
 
-typedef struct{
-	long x;
-	long y;
-}point;
+typedef long long ll;
+#define rep(i,n) for(i=0;i<n;++i)
+#define each(itr,c) for(__typeof(c.begin()) itr=c.begin(); itr!=c.end(); ++itr)
+#define mp make_pair
+#define pb push_back
+#define fi first
+#define sc second
 
-int main(){
-	while(1){
-		int m, n;
-		point s[200], t[1000];
-		point def;
-		
-		scanf(" %d", &m);
+typedef pair<int,int> pi;
+
+int main()
+{
+	int i,j;
+	while(1)
+	{
+		int m;
+		cin >>m;
 		if(m==0) break;
-		for(int i=0; i<m; ++i) scanf(" %ld %ld", &s[i].x, &s[i].y);
-		//平行移動
-		def = s[0];
-		for(int i=1; i<n; ++i){
-			s[i].x -= s[0].x;	
-			s[i].y -= s[0].y;
+
+		vector<pi> a(m);
+		rep(i,m) scanf(" %d %d",&a[i].fi,&a[i].sc);
+
+		int n;
+		cin >>n;
+		vector<pi> b(n);
+		set<pi> s;
+		rep(i,n){
+			scanf(" %d %d",&b[i].fi,&b[i].sc);
+			s.insert(b[i]);
 		}
-		s[0].x=0;
-		s[0].y=0;
-		
-		scanf(" %d", &n);
-		for(int i=0; i<n; ++i) scanf(" %ld %ld", &t[i].x, &t[i].y);
-		
-		for(int i=0; i<n; ++i){ //t[i]中心に平行移動そてみる
-			point r[1000];
-			memcpy(r, t, sizeof(t));
-			for(int j=0; j<n; ++j){
-				if(j==i) continue;
-				r[j].x -= r[i].x;	
-				r[j].y -= r[i].y;
+
+		int x=0,y=0;
+		//a[0]とb[i]を揃える
+		rep(i,n)
+		{
+			bool valid=true;
+			int dx=b[i].fi-a[0].fi;
+			int dy=b[i].sc-a[0].sc;
+			rep(j,m)
+			{
+				pi tmp(a[j].fi+dx,a[j].sc+dy);
+				if(s.find(tmp)==s.end())
+				{
+					valid=false;
+					break;
+				}
 			}
-			r[i].x=0;
-			r[i].y=0;
-			
-			bool flag=true;
+
+			if(valid)
+			{
+				x=dx;
+				y=dy;
+				break;
+			}
 		}
-		
-	
+
+		printf("%d %d\n",x,y);
 	}
 }
