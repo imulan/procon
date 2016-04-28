@@ -10,8 +10,26 @@ typedef long long ll;
 #define fi first
 #define se second
 
+typedef pair<int,int> pi;
+typedef pair<pi,stack<int>> p;
+
+int n,m;
+vector<int> a,b;
+
+map<p,int> m;
+int rec(int x, int y, stack<int> st)
+{
+
+}
+
+
 int main()
 {
-    
-    return 0;
+	cin >>n >>m;
+	a.resize(n);
+	b.resize(m);
+	rep(i,n) cin >>a[i];
+	rep(i,m) cin >>b[i];
+
+	return 0;
 }

@@ -10,8 +10,35 @@ typedef long long ll;
 #define fi first
 #define se second
 
+inline int ab(int x)
+{
+	return (x>0)?x:-x;
+}
+
 int main()
 {
-    
-    return 0;
+	int h,w;
+	int c[6][6];
+
+	cin >>h >>w;
+	rep(i,h)rep(j,w) cin >>c[i][j];
+
+	int ans=0;
+
+	for(int i=1; i<h*w; ++i)
+	{
+		int f=(i-1)/w, s=(i-1)%w;
+
+		rep(y,h)rep(x,w)
+		{
+			if(c[y][x]==i)
+			{
+				ans+=ab(y-f)+ab(x-s);
+				break;
+			}
+		}
+	}
+
+	std::cout << ans << std::endl;
+	return 0;
 }

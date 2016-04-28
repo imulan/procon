@@ -1,98 +1,74 @@
-#include <cstdio>
-#include <iostream>
+#include <bits/stdc++.h>
 using namespace std;
 
-int main(){
-	bool flag=false;
-	
-	while(1){
-		int n, m[4];
-		int ans[4]={0}, tmp[4], x[4];
-		int money[4]={10, 50, 100, 500};
-		
-		scanf(" %d", &n);
-		if(n==0) break;
-		for(int i=0; i<4; ++i){
-			scanf(" %d", &m[i]);
-			ans[i]=m[i];
-		}
-		
-		for(int a=0; a<=m[0]; ++a){ //10
-			int now1=n;
-			int t1=now1%50;
-			
-			if(t1<=a*10){
-				if( (now1-a*10)%50 != 0 ) continue;
-			}
-			now1 -= a*10;
-			
-			for(int b=0; b<=m[1]; ++b){ //50
-				int now2=now1;
-				int t2=now2%100;
-				printf("t2=%d\n",t2);
-			
-				if(t2<=b*50){
-					if( (now2-b*50)%100 != 0 ) continue;
-				}
-				now2 -= b*50;
-					
-				for(int c=0; c<=m[2]; ++c){ //100
-					int now3=now2;
-					int t3=now3%500;
-					printf("t3=%d\n",t3);
-			
-					
-					if(t3<=c*100){
-						if( (now3-c*100)%500 != 0 ) continue;
-					}
-					now3 -= c*100;
-					
-					for(int d=0; d<=m[3]; ++d){ //500
-						if(now3-d*500<=-500) break;
-						
-						//printf(" %d %d %d %d\n", a, b, c, d);
-								
-						int charge=-(now3-d*500);
-							
-						if(charge>=0){
-							
-							tmp[3]=m[3]-d+charge/500;
-							charge-=(charge/500)*500;
-							
-							tmp[2]=m[2]-c+charge/100;
-							charge-=(charge/100)*100;
-							
-							tmp[1]=m[1]-b+charge/50;
-							charge-=(charge/50)*50;
-							
-							tmp[0]=m[0]-a+charge/10;
-							charge-=(charge/10)*10;
-							
-							//printf("%d %d %d %d -> %d %d %d %d\n", a, b, c, d, tmp[0], tmp[1], tmp[2], tmp[3]);
-							
-							int t1=0, t2=0;
-							for(int i=0; i<4; ++i){
-								t1+=ans[i];
-								t2+=tmp[i];
-							}
-							if(t2<t1){
-								for(int i=0; i<4; ++i){
-									ans[i]=tmp[i];	
-									x[i]=m[i]-tmp[i];
-								}
-							}
-						}
-						
-					}	
-				}	
-			}
-		}
-		
-		if(flag) printf("\n");
-		for(int i=0; i<4; ++i){
-			if(x[i] > 0) printf("%d %d\n", money[i], x[i]);
-		}
-		flag=true;
-	}	
-	return 0;
+typedef long long ll;
+#define rep(i,n) for(int (i)=0;(i)<(int)(n);++(i))
+#define each(itr,c) for(__typeof(c.begin()) itr=c.begin(); itr!=c.end(); ++itr)
+#define all(x) (x).begin(),(x).end()
+#define mp make_pair
+#define pb push_back
+#define fi first
+#define se second
+
+int main()
+{
+    bool first=true;
+    while(1)
+    {
+        //input
+        int m;
+        cin >>m;
+        if(m==0) break;
+
+        int x[4];
+        rep(i,4) cin >>x[i];
+
+        int sum=100;
+        int u[4]={500,100,50,10};
+        int ans[4]={0};
+
+        rep(a,x[0]+1)rep(b,x[1]+1)rep(c,x[2]+1)rep(d,x[3]+1)
+        {
+            //printf("%d,%d,%d,%d\n",a,b,c,d);
+            int p=a*10+b*50+c*100+d*500-m;
+            if(p<0) continue;
+
+            int t[4]={0};
+            int u[4]={500,100,50,10};
+            rep(i,4)
+            {
+                int ct=0;
+                while(p-u[i]>=0)
+                {
+                    ++ct;
+                    p-=u[i];
+                }
+                t[i]=ct;
+            }
+
+            int tsum=0;
+            tsum+=t[0]+x[0]-a;
+            tsum+=t[1]+x[1]-b;
+            tsum+=t[2]+x[2]-c;
+            tsum+=t[3]+x[3]-d;
+
+            if(tsum<sum)
+            {
+                sum=tsum;
+                ans[0]=d;
+                ans[1]=c;
+                ans[2]=b;
+                ans[3]=a;
+            }
+
+        }
+
+        if(!first) printf("\n");
+        for(int i=3; i>=0; --i)
+        {
+            if(ans[i]>0) printf("%d %d\n",u[i],ans[i]);
+        }
+        first=false;
+    }
+    return 0;
 }
