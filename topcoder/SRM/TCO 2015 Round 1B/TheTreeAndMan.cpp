@@ -12,77 +12,104 @@ typedef long long ll;
 
 class TheTreeAndMan {
     public:
+    const long mod=1e9+7;
 
-	const long mod=1e9+7;
+    int sum(int x, int y)
+    {
+        long ret=x;
+        ret+=y;
+        while(ret<0) ret+=mod;
+        ret%=mod;
+        return (int)ret;
+    }
 
-	//グラフ
-	vector<int> G[2000];
-	//その頂点から到達可能な頂点数(自身も含む)
-	int reach[2000];
-
-	long dp[2000][3];
-	//xをManのp(頭、首、腰)にする方法
-	long rec(int x, int p)
-	{
-		if(dp[x][p]>=0) return dp[x][p];
-
-		long ret=0;
-		if(p==0)
-		{
-			//首の位置を探す
-			rep(i,G[x].size()) ret=(ret+rec(G[x][i],1))%mod;
-		}
-		else if(p==1)
-		{
-			//手を2箇所と腰を1箇所選ぶ
-			rep(i,G[x].size())rep(j,G[x].size())rep(k,j)
-			{
-				if(i==j || i==k) continue;
-
-				long add=reach[G[x][j]]*reach[G[x][k]];
-				add%=mod;
-				add*=rec(G[x][i],2);
-				add%=mod;
-
-				ret+=add;
-				ret%=mod;
-			}
-		}
-		else if(p==2)
-		{
-			//足を2箇所選ぶ
-			rep(i,G[x].size())rep(j,i)
-			{
-				ret+=reach[G[x][i]]*reach[G[x][j]];
-				ret%=mod;
-			}
-		}
-
-		return dp[x][p]=ret;
-	}
+    int mul(int x, int y)
+    {
+        long ret=x;
+        ret*=y;
+        ret%=mod;
+        return (int)ret;
+    }
 
     int solve(vector<int> parent) {
-		//頂点数
-		int n=parent.size()+1;
+        //頂点数
+        int n=parent.size()+1;
+        //グラフ
+        vector<int> G[2000];
 
-		//有向辺を張る
-		rep(i,parent.size()) G[parent[i]].pb(i+1);
+        //グラフ内でのその頂点の深さ
+        int depth[2000]={0};
+        //その頂点から到達可能な頂点数(自身も含む)
+        int reach[2000]={0};
+        //その頂点を足の付根とするときの選び方の総数
+        int leg[2000]={0};
+        //その頂点以下のlegの和
+        int body[2000]={0};
 
-		memset(reach,-1,sizeof(reach));
-		//頂点iから到達可能な頂点数を計算
-		for(int i=n-1; i>=0; --i)
-		{
-			//まず自分自身を計上
-			reach[i]=1;
-			rep(j,G[i].size()) reach[i]+=reach[G[i][j]];
-		}
+        //有向辺を張る
+        rep(i,parent.size()) G[parent[i]].pb(i+1);
 
-		long ret=0;
-		memset(dp,-1,sizeof(dp));
+        //頂点iから到達可能な頂点数を計算
+        for(int i=n-1; i>=0; --i)
+        {
+            //まず自分自身を計上
+            reach[i]=1;
+            rep(j,G[i].size()) reach[i]=sum(reach[i],reach[G[i][j]]);
+        }
 
-		rep(i,n) ret=(ret+rec(i,0))%mod;
+        //BFSして深さを計算
+        queue<int> que;
+        que.push(0);
+        int vis[2000]={0};
+        vis[0]=1;
+        depth[0]=0;
+        while(!que.empty())
+        {
+            int v=que.front();
+            que.pop();
+            rep(i,G[v].size())
+            {
+                int nx=G[v][i];
+                if(!vis[nx])
+                {
+                    vis[nx]=1;
+                    depth[nx]=depth[v]+1;
+                    que.push(nx);
+                }
+            }
+        }
 
-        return (int)ret;
+        //legの計算
+        rep(i,n)
+        {
+            int cur=0;
+            rep(j,G[i].size()) cur=sum(cur,reach[G[i][j]]);
+
+            rep(j,G[i].size())
+            {
+                leg[i]=sum(leg[i],mul(reach[G[i][j]],sum(cur,-reach[G[i][j]])));
+                cur=sum(cur,-reach[G[i][j]]);
+            }
+
+            body[i]=leg[i];
+        }
+
+        //bodyの計算
+        for(int i=n-1; i>0; --i)
+        {
+            body[parent[i-1]]=sum(body[parent[i-1]],body[i]);
+        }
+
+        int ret=0;
+        for(int i=1; i<n; ++i)
+        {
+            int j=parent[i-1];
+            int add=mul(depth[i]-1,mul(body[i],sum(leg[j],-mul(reach[i],reach[j]-1-reach[i]))));
+
+            ret=sum(ret,add);
+        }
+
+        return ret;
     }
 };
 
