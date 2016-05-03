@@ -1,87 +1,121 @@
-#include <cstdio>
-#include <cstring>
-#include <iostream>
+#include <bits/stdc++.h>
 using namespace std;
 
-int n, m;
+typedef long long ll;
+#define rep(i,n) for(int (i)=0;(i)<(int)(n);++(i))
+#define each(itr,c) for(__typeof(c.begin()) itr=c.begin(); itr!=c.end(); ++itr)
+#define all(x) (x).begin(),(x).end()
+#define mp make_pair
+#define pb push_back
+#define fi first
+#define se second
 
-int judge(int a){
-	int ret=0;
-	
-	if(a==0){
-		for(int i=1; i<=n; ++i){
-			for(int j=1; j<=n; ++j){
-				int b1=0, w1=0, b2=0, w2=0, b3=0, w3=0;
-				ret=0;
-				
-				for(int k=1; k<=n; ++k){
-					if(f[i][j][k]==0){
-						b1=0;
-						w1=0;
-					}
-					else if(f[i][j][k]==1) b1++;
-					else if(f[i][j][k]==2) w1++;
-					
-					if(f[i][k][j]==0){
-						b2=0;
-						w2=0;
-					}
-					else if(f[i][k][j]==1) b2++;
-					else if(f[i][k][j]==2) w2++;
+typedef pair<int,int> pi;
 
-					if(f[i][j][k]==0){
-						b3=0;
-						w3=0;
-					}
-					else if(f[k][i][j]==1) b3++;
-					else if(f[k][i][j]==2) w3++;
-	
-					if(b1==m || b2==m || b3==m) ret=1;
-					if(w1==m || w2==m || w3==m) ret=2;
-					
-					if(ret!=0) break;
-				}
-				if(ret!=0) break;					
-			}
-			if(ret!=0) break;
-		}
-	}
-	else if(a<7){
-		
-	}
-	else if(a<11){
-		
-		
-	}
-	
-	return ret;
+int n,m;
+int f[7][7][7];
+int h[7][7];
+
+inline bool ok(int a)
+{
+    return (0<=a && a<n);
 }
 
+bool check()
+{
+    //3:one,6:two,4:three _dimension
+    int dx[13]={1,0,0,1,1,1,-1,0,0,1,1,1,1};
+    int dy[13]={0,1,0,1,-1,0,0,1,1,1,1,-1,-1};
+    int dz[13]={0,0,1,0,0,1,1,1,-1,1,-1,1,-1};
 
-int main(){
-	while(1){
-		int p;
-		int f[8][8][8];
-		int h[8][8];
-		
-		scanf(" %d %d %d", &n, &m, &p);
-		if(n==0)	 break;
-		
-		memset(f, 0, sizeof(f));
-	
-		for(int i=1; i<=7; ++i)
-		for(int j=1; j<=7; ++j)
-		h[i][j]=1;
-	
-		for(int i=0; i<p; ++i){
-			int a, b;
-			scanf(" %d %d", &a, &b);	
-			f[a][b][ h[i][j]++ ] = (i%2)+1 //black=1, white=2
-			
-			
-			
-		}
-		
-		
-	}
+    //start point
+    rep(i,n)rep(j,n)rep(k,n)
+    {
+        int col=f[i][j][k];
+
+        if(col==-1) continue;
+
+        //printf("start check %d,%d,%d :col %d\n", i,j,k,col);
+
+        rep(d,13)
+        {
+            bool valid=true;
+            for(int s=1; s<m; ++s)
+            {
+                int nx=i+s*dx[d];
+                int ny=j+s*dy[d];
+                int nz=k+s*dz[d];
+                if(ok(nx) && ok(ny) && ok(nz))
+                {
+                    if(f[nx][ny][nz]!=col)
+                    {
+                        valid=false;
+                        break;
+                    }
+                }
+                else
+                {
+                    valid=false;
+                    break;
+                }
+            }
+
+            //found sequence
+            if(valid) return true;
+        }
+    }
+
+    //failed
+    return false;
+}
+
+int main()
+{
+    while(1)
+    {
+        int p;
+        cin >>n >>m >>p;
+        if(n==0) break;
+
+        vector<pi> v(p);
+        rep(i,p)
+        {
+            scanf(" %d %d", &v[i].fi, &v[i].se);
+            --v[i].fi;
+            --v[i].se;
+        }
+
+        memset(f,-1,sizeof(f));
+        memset(h,0,sizeof(h));
+
+        //simulation
+        int ans=-1;
+        rep(i,p)
+        {
+            //0:black, 1:white
+            int col=i%2;
+
+            int x=v[i].fi;
+            int y=v[i].se;
+
+            f[x][y][h[x][y]++]=col;
+
+            if(check())
+            {
+                ans=i;
+                break;
+            }
+        }
+
+        //output
+        if(ans==-1) printf("Draw\n");
+        else
+        {
+            if(ans%2==0) printf("Black ");
+            else printf("White ");
+
+            printf("%d\n", ans+1);
+        }
+    }
+    return 0;
 }
