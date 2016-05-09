@@ -10,8 +10,6 @@ typedef long long ll;
 #define fi first
 #define se second
 
-typedef pair<int,int> pi;
-
 int main()
 {
     int n,m,p;
