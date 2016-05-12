@@ -28,51 +28,41 @@ int dp[N+1];
 //そのときの経路の最後に通る素数
 int last[N+1];
 
+bool inline in(int x, int y)
+{
+    return (0<=x&&x<1000 && 0<=y&&y<1000);
+}
+
 int dfs(int v)
 {
     if(dp[v]>=0) return dp[v];
 
     int ret=0;
-    pi now=im[v];
-    if(now.fi==999)
+    int x=im[v].se;
+    int y=im[v].fi;
+
+    int t[3];
+    memset(t,-1,sizeof(t));
+
+    rep(i,3)
     {
-        if(prime[v])
-        {
-            ret=1;
-            last[v]=v;
-        }
+        if(in(y+1,x+i-1) && field[y+1][x+i-1]<=m)
+            t[i]=dfs(field[y+1][x+i-1]);
     }
-    else
+
+    ret=max({0,t[0],t[1],t[2]});
+    rep(i,3)
     {
-        int t[3];
-        memset(t,-1,sizeof(t));
+        if(ret==t[i]) last[v]=max(last[v],last[field[y+1][x+i-1]]);
+    }
 
-        if(now.se>0 && field[now.fi+1][now.se-1]<=m)
-            t[0]=dfs(field[now.fi+1][now.se-1]);
-        if(field[now.fi+1][now.se]<=m)
-            t[1]=dfs(field[now.fi+1][now.se]);
-        if(now.se<1000-1 && field[now.fi+1][now.se+1]<=m)
-            t[2]=dfs(field[now.fi+1][now.se+1]);
-
-        ret=max({0,t[0],t[1],t[2]});
-        rep(i,3)
-        {
-            if(ret==t[i]) last[v]=max(last[v],last[field[now.fi+1][now.se+i-1]]);
-        }
-
-        if(prime[v])
-        {
-            ++ret;
-            if(ret==1) last[v]=v;
-        }
+    if(prime[v])
+    {
+        ++ret;
+        if(ret==1) last[v]=v;
     }
 
     return dp[v]=ret;
-}
-
-bool inline in(int x, int y)
-{
-    return (0<=x&&x<1000 && 0<=y&&y<1000);
 }
 
 int main()
