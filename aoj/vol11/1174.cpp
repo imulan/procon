@@ -19,8 +19,13 @@ int h,w,c;
 
 int dx[]={1,-1,0,0}, dy[]={0,0,1,-1};
 
+map<pair<pi,vvi>,int> dp;
+
 int dfs(int col, int num, const vvi &field)
 {
+    pair<pi,vvi> d(pi(col,num),field);
+    if(dp.find(d) != dp.end()) return dp[d];
+
     //BFS
     vvi vis(h,vi(w,0));
     //最初の左上の色
@@ -84,7 +89,7 @@ int dfs(int col, int num, const vvi &field)
         }
     }
 
-    return ret;
+    return dp[d]=ret;
 }
 
 int main()
@@ -93,6 +98,8 @@ int main()
     {
         f=vvi(h,vi(w));
         rep(i,h)rep(j,w) scanf(" %d", &f[i][j]);
+
+        dp.clear();
 
         int ans=0;
         for(int i=1; i<=6; ++i) ans=max(ans,dfs(i,1,f));
