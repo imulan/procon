@@ -1,6 +1,7 @@
 *.in
 *.out
 *.txt
+*.class
 .DS_Store
 /topcoder/contestapplet.conf
 /topcoder/contestapplet.conf.bak
