@@ -20,6 +20,7 @@ int main()
         vector<string> s(n);
         rep(i,n) cin >>s[i];
 
+        //重複要素の削除
         sort(all(s));
         s.erase(unique(all(s)),s.end());
         n=s.size();
@@ -64,16 +65,10 @@ int main()
             {
                 string a=s[i].substr(s[i].size()-k,k);
                 string b=s[j].substr(0,k);
-                /*
-                printf("%d, %d, %d :", i,j,k);
-                cout <<" a: "<<a<<" , b: "<<b<<endl;
-                */
                 if(a==b) ct=k;
             }
             cov[i][j]=ct;
         }
-
-        //rep(i,n)rep(j,n) printf(" cov[%d][%d]=%d\n", i,j,cov[i][j]);
 
         string INF="";
         rep(i,100) INF+="z";
@@ -113,11 +108,6 @@ int main()
         string ans=INF;
         rep(i,n)
         {
-            /*
-            printf("dp[%d][%d]= ", i,(1<<n)-1);
-            cout << dp[i][(1<<n)-1] <<endl;
-            */
-
             if(dp[i][(1<<n)-1].size()<ans.size()) ans=dp[i][(1<<n)-1];
             else if(dp[i][(1<<n)-1].size()==ans.size()) ans=min(ans,dp[i][(1<<n)-1]);
         }
