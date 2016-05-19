@@ -35,24 +35,64 @@ int main()
         int ans=-1;
         vector<vi> v(n,vi(n,0));
 
+        rep(i,n) v[i][i]=1;
+
         //i-th day
         for(int i=1; i<=30; ++i)
         {
-            rep(j,n)rep(k,n)
+            vi G[50];
+            rep(j,n)rep(k,j)
             {
                 if(s[j][i] && s[k][i])
                 {
-                    v[j][j]=1;
-                    v[k][k]=1;
-                    v[j][k]=1;
-                    v[k][j]=1;
+                    G[j].pb(k);
+                    G[k].pb(j);
+                }
+            }
 
-                    rep(x,n)
+            //root-j BFS
+            vi vv(n);
+            rep(j,n)
+            {
+                if(vv[j]) continue;
+
+                vi vis(n);
+                vis[j]=1;
+                queue<int> que;
+                que.push(j);
+                while(!que.empty())
+                {
+                    int now=que.front();
+                    que.pop();
+                    rep(k,G[now].size())
                     {
-                        v[j][x]|=v[k][x];
-                        v[k][x]|=v[j][x];
+                        int nx=G[now][k];
+                        if(!vis[nx])
+                        {
+                            que.push(nx);
+                            vis[nx]=1;
+                        }
                     }
                 }
+
+                vi p(n);
+                rep(k,n)
+                {
+                    if(vis[k])
+                    {
+                        rep(l,n) p[l]|=v[k][l];
+                    }
+                }
+
+                rep(k,n)
+                {
+                    if(vis[k])
+                    {
+                        rep(l,n) v[k][l]|=p[l];
+                    }
+                }
+
+                rep(k,n) vv[k]|=vis[k];
             }
 
             rep(j,n)
