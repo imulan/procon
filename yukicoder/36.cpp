@@ -2,38 +2,59 @@
 using namespace std;
 
 typedef long long ll;
-#define rep(i,n) for(i=0;i<n;++i)
-#define each(itr,c) for(__typeof(c.begin()) itr=c.begin(); itr!=c.end(); itr++)
+#define rep(i,n) for(int (i)=0;(i)<(int)(n);++(i))
+#define each(itr,c) for(__typeof(c.begin()) itr=c.begin(); itr!=c.end(); ++itr)
+#define all(x) (x).begin(),(x).end()
 #define mp make_pair
 #define pb push_back
 #define fi first
-#define sc second
+#define se second
 
-ll div(ll n){
-  ll ret=1;
-  ll t=n;
-  for(ll i=2; i*i<=n; ++i){
-    ll ct=0;
-    while (t%i==0) {
-      t/=i;
-      ++ct;
+const int N=10000000;
+bool p[N+1];
+
+bool inline prime(ll x)
+{
+    for(ll i=2; i*i<=x; ++i)
+    {
+        if(x%i==0) return false;
     }
-    ret*=ct+1;
-  }
-
-  return ret;
+    return true;
 }
 
-int main(int argc, char const *argv[]) {
-  ll n;
-  cin >>n;
+bool valid(ll x)
+{
+    fill(p,p+N+1,true);
+    p[0]=p[1]=false;
+    for(ll i=2; i<=N; ++i)
+    {
+        if(p[i]) for(ll j=2; i*j<=N; ++j) p[i*j]=false;
+    }
 
-  //printf("  %lld\n", div(n));
-  bool ans=true;
-  if(div(n)<=3) ans=false;
 
-  string r="NO";
-  if(ans) r="YES";
-  std::cout << r << std::endl;
-  return 0;
+    for(ll i=2; i*i<=x; ++i)
+    {
+        if(x%i==0)
+        {
+            if(!p[i]) return true;
+            else
+            {
+                if(!prime(x/i)) return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+int main()
+{
+    ll n;
+    cin >>n;
+
+    string ans="NO";
+    if(valid(n)) ans="YES";
+
+    std::cout << ans << std::endl;
+    return 0;
 }
