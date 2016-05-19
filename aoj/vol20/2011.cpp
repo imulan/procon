@@ -38,7 +38,7 @@ int main()
         //i-th day
         for(int i=1; i<=30; ++i)
         {
-            rep(j,n)rep(k,j)
+            rep(j,n)rep(k,n)
             {
                 if(s[j][i] && s[k][i])
                 {
