@@ -3,6 +3,7 @@
 *.txt
 *.class
 .DS_Store
+/hackerrank/ProjectEuler/**
 /topcoder/contestapplet.conf
 /topcoder/contestapplet.conf.bak
 /topcoder/ContestAppletProd.jnlp
