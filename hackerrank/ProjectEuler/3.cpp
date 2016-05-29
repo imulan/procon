@@ -1,42 +1,43 @@
-//TLE
-
-#include <cmath>
-#include <cstdio>
-#include <iostream>
+#include <bits/stdc++.h>
 using namespace std;
 
-unsigned long long solve(long long x){
-	unsigned long long ret=1;
-	
-	while(x%2==0){
-		x/=2;
-		ret=2;
-	}
-	
-	unsigned long long p=3;
-	while(x!=1){
-		while(x%p==0){
-			x/=p;
-			ret=p;
-					printf("p=");
-		cout<<p<<endl;
+typedef long long ll;
+#define rep(i,n) for(int (i)=0;(i)<(int)(n);++(i))
+#define each(itr,c) for(__typeof(c.begin()) itr=c.begin(); itr!=c.end(); ++itr)
+#define all(x) (x).begin(),(x).end()
+#define mp make_pair
+#define pb push_back
+#define fi first
+#define se second
 
-		}
-		p+=2;
-	}		
-	
-	return ret;
+const int N=1000000;
+
+ll solve(ll x)
+{
+    ll ans=0;
+    for(ll i=2; i*i<=x; ++i)
+    {
+        if(x%i==0)
+        {
+            ans=max(ans,i);
+            while(x%i==0) x/=i;
+        }
+    }
+
+    if(x>1) ans=max(ans,x);
+    return ans;
 }
 
+int main()
+{
+    int T;
+    cin >>T;
+    rep(t,T)
+    {
+        ll n;
+        cin >>n;
 
-int main(){
-	
-	int t;
-	scanf(" %d", &t);
-	for(int i=0; i<t; ++i){
-		unsigned long long n;
-		cin >> n;
-		
-		cout << solve(n) << endl;		
-	}
+        cout << solve(n) << endl;
+    }
+    return 0;
 }
