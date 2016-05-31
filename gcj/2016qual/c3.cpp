@@ -35,7 +35,7 @@ int main()
         rep(i,J)
         {
             string s="1";
-                rep(j,N-2)
+            rep(j,N-2)
             {
                 if(i>>j&1) s+="1";
                 else s+="0";
