@@ -12,24 +12,24 @@ typedef long long ll;
 
 int main()
 {
-	int T;
-	cin >>T;
-	rep(t,T)
-	{
-		string s;
-		cin >>s;
+    int T;
+    cin >>T;
+    rep(t,T)
+    {
+        string s;
+        cin >>s;
 
-		string ans="";
-		rep(i,s.size())
-		{
-			string x=s[i]+ans;
-			string y=ans+s[i];
-			if(x<y) ans=y;
-			else ans=x;
-		}
+        string ans="";
+        rep(i,s.size())
+        {
+            string x=s[i]+ans;
+            string y=ans+s[i];
+            if(x<y) ans=y;
+            else ans=x;
+        }
 
-		printf("Case #%d: ",t+1);
-		std::cout << ans << std::endl;
-	}
-	return 0;
+        printf("Case #%d: ",t+1);
+        std::cout << ans << std::endl;
+    }
+    return 0;
 }
