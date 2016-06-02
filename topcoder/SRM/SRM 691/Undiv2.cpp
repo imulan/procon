@@ -58,7 +58,7 @@ class Undiv2 {
             que.push(lcm(v,S.se));
         }
 
-        vector<pair<ll,ll>> d;
+        vector<pl> d;
         for(const auto &x:f) d.pb(pl(x,s(x).se));
 
         sort(all(d));
