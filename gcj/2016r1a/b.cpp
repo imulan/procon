@@ -12,36 +12,30 @@ typedef long long ll;
 
 int main()
 {
-	int T;
-	cin >>T;
-	rep(t,T)
-	{
-		int n;
-		cin >>n;
-		vector< vector<int> > v(2*n-1, vector<int>(n) );
-		rep(i,2*n-1)rep(j,n) scanf(" %d", &v[i][j]);
+    int T;
+    cin >>T;
+    rep(t,T)
+    {
+        int n;
+        cin >>n;
 
-		sort(all(v));
-		rep(i,2*n-1)
-		{
-			rep(j,n) printf(" %d",v[i][j]);
-			printf("\n");
-		}
+        int ct[2501]={0};
+        rep(i,2*n-1)rep(j,n)
+        {
+            int a;
+            cin >>a;
+            ++ct[a];
+        }
 
-		//field
-		vector< vector<int> > f(n, vector<int>(n) );
-		//1列目をセット
-		rep(i,n) f[i][0]=v[0][i];
+        vector<int> ans;
+        rep(i,2501)
+        {
+            if(ct[i]%2==1) ans.pb(i);
+        }
 
-
-
-		vector<int> ans(n);
-
-
-
-		printf("Case #%d:",t+1);
-		rep(i,n) printf(" %d",ans[i]);
-		printf("\n");
-	}
-	return 0;
+        printf("Case #%d:",t+1);
+        for(const auto& x:ans) printf(" %d",x);
+        printf("\n");
+    }
+    return 0;
 }
