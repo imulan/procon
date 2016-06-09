@@ -1,42 +1,58 @@
-#include <cstdio>
-#include <cstring>
-#include <iostream>
-#include <queue>
+#include <bits/stdc++.h>
 using namespace std;
 
-typedef struct{
-	int f;
-	int s;
-}point;
+typedef long long ll;
+#define rep(i,n) for(int (i)=0;(i)<(int)(n);++(i))
+#define each(itr,c) for(__typeof(c.begin()) itr=c.begin(); itr!=c.end(); ++itr)
+#define all(x) (x).begin(),(x).end()
+#define mp make_pair
+#define pb push_back
+#define fi first
+#define se second
 
-int main(){
-	while(1){
-		int m, n;
-		int f[90][90];
-		
-		scanf(" %d %d", &m, &n);
-		if(m==0) break;
-		for(int i=0; i<n; ++i)
-		for(int j=0; j<m; ++j)
-		scanf(" %d", &f[i][j]);
-		
-		for(int i=0; i<n; ++i){
-			for(int j=0; j<m; ++j){
-				if(f[i][j]==0) continue; //薄氷の上じゃないとダメ
-				
-				point start;
-				start.f=i;
-				start.s=j;
-				
-				int r[90][90];
-				int d[90][90]; //distance from start
-				for(int p=0; p<90; ++p)
-				for(int q=0; q<90; ++q)
-				dist[p][q]=0;
-				memcpy(r, f, sizeof(f));
-				
-		
-		
-		
-	}
+int m,n;
+int f[90][90];
+int dy[4]={1,-1,0,0}, dx[4]={0,0,1,-1};
+
+inline bool in(int y, int x)
+{
+    return (0<=y&&y<n && 0<=x&&x<m);
+}
+
+//現在位置
+int dfs(int y, int x)
+{
+    int ret=1;
+    rep(i,4)
+    {
+        int ny=y+dy[i], nx=x+dx[i];
+        if(in(ny,nx) && f[ny][nx]==1)
+        {
+            f[y][x]=0;
+            ret=max(ret,dfs(ny,nx)+1);
+            f[y][x]=1;
+        }
+    }
+
+    //printf(" %d,%d ret %d\n", y,x,ret);
+    return ret;
+}
+
+int main()
+{
+    while(cin >>m >>n,m|n)
+    {
+        rep(i,n)rep(j,m) scanf(" %d", &f[i][j]);
+
+        int ans=0;
+        rep(i,n)rep(j,m)
+        {
+            if(f[i][j]==0) continue;
+            //printf("start %d,%d\n", i,j);
+            ans=max(ans,dfs(i,j));
+        }
+
+        cout << ans << endl;
+    }
+    return 0;
 }
