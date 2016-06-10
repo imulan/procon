@@ -1,43 +1,55 @@
-#include <cstdio>
-#include <cstring>
-#include <iostream>
-#include <string>
+#include <bits/stdc++.h>
 using namespace std;
 
-int dp[1001][8][3];
+typedef long long ll;
+#define rep(i,n) for(int (i)=0;(i)<(int)(n);++(i))
+#define each(itr,c) for(__typeof(c.begin()) itr=c.begin(); itr!=c.end(); ++itr)
+#define all(x) (x).begin(),(x).end()
+#define mp make_pair
+#define pb push_back
+#define fi first
+#define se second
+
 int n;
 string s;
 
-int rec(int a, int b, int c){ //a日目,参加状況b,鍵を持ってる人c
-	if(dp[a][b][c]>=0) return dp[a][b][c];
-	int ret=0;
-	
-	int ch=0;
-	if(s[a]=='J') ch=0;
-	else if(s[a]=='O') ch=1;
-	else if(s[a]=='I') ch=2;
-	
-	if(a==n) ret=1;
-	else{
-		for(int i=1; i<=7; ++i){
-			for(int j=0; j<=2; ++j){
-				if((1<<c) & i & 1) ret=0;
-				else if((1<<ch) & i & 1) ret=0;
-				else{
-					printf("go\n");
+const int mod=10007;
 
-					ret+=rec(a+1, i, j);
-					ret%=10007;		
-				}
-			}
-		}
-	}
-	
-	return dp[a][b][c]=ret%10007;
+int dp[1001][8];
+
+//a日目,前日の参加状況b
+int dfs(int a, int b)
+{
+    if(dp[a][b]>=0) return dp[a][b];
+
+    if(a==n) return 1;
+
+    //a日目の責任者
+    int res=0;
+    if(s[a]=='J') res=0;
+    else if(s[a]=='O') res=1;
+    else if(s[a]=='I') res=2;
+
+    int ret=0;
+    //この日の参加状況を仮定
+    for(int i=1; i<=7; ++i)
+    {
+        //この日の責任者はいないといけない
+        //前日との差分で1人は同じ人が必要(鍵のため)
+        if((i>>res&1) && (b&i))
+        {
+            ret+=dfs(a+1,i);
+            ret%=mod;
+        }
+    }
+
+    return dp[a][b]=ret;
 }
 
-int main(){
-	cin >> n >> s;
-	memset(dp, -1, sizeof(dp));
-	printf("%d\n", rec(0, 7, 0));
+int main()
+{
+    cin >>n >>s;
+    memset(dp,-1,sizeof(dp));
+    cout << dfs(0,1) << endl;
+    return 0;
 }
