@@ -15,20 +15,23 @@ typedef pair<int,int> pi;
 int main()
 {
     int n;
-    cin >>n;
+    scanf(" %d", &n);
     vector<int> a(n),b(n);
     rep(i,n) scanf(" %d", &a[i]);
     rep(i,n) scanf(" %d", &b[i]);
 
     int ans=n;
 
+    priority_queue<pi,vector<pi>,greater<pi>> def;
+    rep(i,n) def.push(pi(a[i],0));
+
     //スタート位置
     rep(i,n)
     {
-        priority_queue<pi,vector<pi>,greater<pi>> que;
+        priority_queue<pi,vector<pi>,greater<pi>> que(def);
 
-        //(レベル,戦闘回数)
-        rep(j,n) que.push(pi(a[j],0));
+        //最大の戦闘回数
+        int t=0;
 
         //バトルしていく
         rep(j,n)
@@ -39,23 +42,14 @@ int main()
             m.fi+=b[(i+j)%n]/2;
             ++m.se;
 
-            que.push(m);
-        }
+            t=max(t,m.se);
 
-        //最大の戦闘回数
-        int t=0;
-        while(!que.empty())
-        {
-            pi now=que.top();
-            que.pop();
-            t=max(t,now.se);
+            que.push(m);
         }
 
         //最小値更新
         ans=min(ans,t);
     }
-
-
 
     cout << ans << endl;
     return 0;
