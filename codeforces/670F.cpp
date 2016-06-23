@@ -53,6 +53,12 @@ int main()
                 td/=10;
             }
 
+            //このような構成は不可能
+            rep(i,10)
+            {
+                if(tct[i]<0) continue;
+            }
+
             string tmp="";
 
             //残った0以外の数の中で最小のもの
