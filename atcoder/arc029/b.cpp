@@ -2,72 +2,51 @@
 using namespace std;
 
 typedef long long ll;
-#define rep(i,n) for(i=0;i<n;++i)
+#define rep(i,n) for(int (i)=0;(i)<(int)(n);++(i))
 #define each(itr,c) for(__typeof(c.begin()) itr=c.begin(); itr!=c.end(); ++itr)
+#define all(x) (x).begin(),(x).end()
 #define mp make_pair
 #define pb push_back
 #define fi first
-#define sc second
+#define se second
 
-double eps=1e-6;
+int main()
+{
+    ll a,b,n;
+    cin >>a >>b >>n;
 
-int main(int argc, char const *argv[]) {
-  int i;
+    //横向きに揃える
+    if(a>b) swap(a,b);
 
-  double a,b;
-  cin >>a >>b;
+    rep(i,n)
+    {
+        ll c,d;
+        cin >>c >>d;
+        if(c>d) swap(c,d);
 
-  a/=100;
-  b/=100;
+        //平行におさまる
+        if(a<c && b<d)
+        {
+            printf("YES\n");
+            continue;
+        }
 
-  int n;
-  cin >>n;
-  rep(i,n){
-    double c,d;
-    scanf(" %lf %lf",&c,&d);
-    if(c>d) swap(c,d);
+        bool valid=false;
+        if(a<=c)
+        {
+            double l=0, r=acos(-1)/2;
+            rep(j,100)
+            {
+                double m=(l+r)/2;
+                if(a*cos(m)+b*sin(m)<c) l=m;
+                else r=m;
+            }
 
-    c/=100;
-    d/=100;
-
-    bool valid=true;
-
-    /*
-    double base=M_PI/2-atan2(d,c);
-    base*=180/M_PI;
-
-    double st=base-10;
-    if(st<0) st=0;
-
-    double ed=base+10;
-    if(ed>90)ed=90;
-    */
-    for(double angle=0; angle<=90; angle+=0.05){
-      double t=angle*M_PI/180;
-
-      valid=true;
-      if(a*cos(t)>c) valid=false;
-      if(a*sin(t)>d) valid=false;
-      if(b*sin(t)>c) valid=false;
-      if(b*cos(t)+a*sin(t)>d) valid=false;
-      if(a*cos(t)+b*sin(t)>c) valid=false;
-      if(b*cos(t)>d) valid=false;
-      if(valid) break;
-
-      valid=true;
-      if(b*cos(t)>c) valid=false;
-      if(b*sin(t)>d) valid=false;
-      if(a*sin(t)>c) valid=false;
-      if(a*cos(t)+b*sin(t)>d) valid=false;
-      if(b*cos(t)+a*sin(t)>c) valid=false;
-      if(a*cos(t)>d) valid=false;
-
-      if(valid) break;
+            if(a*sin(l)+b*cos(l)<d) valid=true;
+        }
+        
+        if(valid) printf("YES\n");
+        else printf("NO\n");
     }
-
-    string ans="NO";
-    if(valid) ans="YES";
-    std::cout << ans << std::endl;
-  }
-  return 0;
+    return 0;
 }
