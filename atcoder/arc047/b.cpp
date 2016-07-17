@@ -1,170 +1,87 @@
-#include <iostream>
-#include <string>
-#include <vector>
-#include <queue>
-#include <stack>
-#include <map>
-#include <algorithm>
-#include <set>
-#include <sstream>
-#include <utility>
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
-#include <cmath>
-#include <cctype>
-#include <climits>
+#include <bits/stdc++.h>
 using namespace std;
 
 typedef long long ll;
-#define FOR(i,a,b) for(int i=(a);i<(b);++i)
-#define REP(i,n) for(int i=0;i<(n);++i)
-#define foreach(itr,c) for(__typeof(c.begin()) itr=c.begin(); itr!=c.end(); itr++)
+#define rep(i,n) for(int (i)=0;(i)<(int)(n);++(i))
+#define each(itr,c) for(__typeof(c.begin()) itr=c.begin(); itr!=c.end(); ++itr)
+#define all(x) (x).begin(),(x).end()
+#define mp make_pair
+#define pb push_back
+#define x first
+#define y second
 
-struct Point{
-  long x,y;
-};
+const int N=2000000000;
 
-struct PD{
-  double x,y;
-};
+typedef pair<int,int> pi;
 
-double t=M_PI/4;
-const double q2=sqrt(2);
-
-long cc(double r){
-  if(r>=0) return (long)(r+0.01);
-  else return (long)(r-0.01);
+pi convert(pi p)
+{
+    return pi((p.y+p.x)/2,(p.y-p.x)/2);
 }
 
-int main(int argc, char const *argv[]) {
-  int n;
-  cin >>n;
+int main()
+{
+    int n;
+    cin >>n;
 
-  vector<Point> p(n);
-  REP(i,n){
-    scanf(" %ld %ld", &p[i].x, &p[i].y);
-  }
-  /*
-  //(y-x, y+x)
-  vector< pair<long,long> > v(n);
+    vector<pi> p(n);
 
-  REP(i,n){
-    scanf(" %ld %ld", &p[i].x, &p[i].y);
-    v[i].first = p[i].y-p[i].x;
-    v[i].second = p[i].y+p[i].x;
-  }
-  */
-  //check
-  /*
-  REP(i,n){
-    printf("(%ld,%ld) -> <%ld, %ld>\n", p[i].x,p[i].y,v[i].first,v[i].second);
-  }
-  */
+    int xmin=N,xmax=-N,ymin=N,ymax=-N;
 
-  if(n==1){
-    printf("0 0\n");
-  }
-  else if(n==2){
-    printf("%ld %ld\n", p[0].x, p[0].y );
-  }
-  else{
-    vector<PD> v(n);
+    rep(i,n)
+    {
+        int tx,ty;
+        scanf(" %d %d", &tx, &ty);
+        //回転
+        int X=tx-ty;
+        int Y=tx+ty;
+        p[i]=pi(X,Y);
 
-    double lx=1e15,ly=1e15;
-    double rx=-1e15,ry=-1e15;
-    REP(i,n){
-      double tx=p[i].x*cos(t)-p[i].y*sin(t);
-      double ty=p[i].x*sin(t)+p[i].y*cos(t);
+        //printf(" convert %d %d\n", X,Y);
 
-      v[i].x=tx*q2; v[i].y=ty*q2;
-
-      lx=min(lx,v[i].x);
-      rx=max(rx,v[i].x);
-      ly=min(ly,v[i].y);
-      ry=max(ry,v[i].y);
-      //printf("(%lf,%lf)\n",v[i].x,v[i].y);
+        xmin=min(xmin,X);
+        xmax=max(xmax,X);
+        ymin=min(ymin,Y);
+        ymax=max(ymax,Y);
     }
 
-    //printf("%lf %lf\n%lf %lf\n",lx,rx,ly,ry);
+    int d=max(xmax-xmin,ymax-ymin);
+    
+    //candidate
+    vector<pi> c;
+    c.pb(pi(xmin+d/2,ymin+d/2));
+    c.pb(pi(xmin+d/2,ymax-d/2));
+    c.pb(pi(xmax-d/2,ymin+d/2));
+    c.pb(pi(xmax-d/2,ymin+d/2));
 
-    double px,py;
-    if(cc(rx-lx)==cc(ry-ly)){
-      px=(lx+rx)/2.0;
-      py=(ly+ry)/2.0;
+    pi ans(0,0);
+    rep(i,c.size())
+    {
+        pi cp=convert(c[i]);
+
+        pi p0=convert(p[0]);
+        int dist=abs(p0.x-cp.x)+abs(p0.y-cp.y);
+
+        bool ok=true;
+        for(int j=1; j<n; ++j)
+        {
+            pi pt=convert(p[j]);
+            int td=abs(pt.x-cp.x)+abs(pt.y-cp.y);
+
+            if(td!=dist)
+            {
+                ok=false;
+                break;
+            }
+        }
+
+        if(ok)
+        {
+            ans=cp;
+            break;
+        }
     }
-    else if(cc(rx-lx)>cc(ry-ly)){
-      px=(lx+rx)/2.0;
 
-      long y_b=0;
-      //1本確定してるyの線を探す
-      set<long> yy;
-      REP(i,n){
-        if(yy.find(cc(v[i].y))==yy.end()){
-          yy.insert(cc(v[i].y));
-        }
-        else{ //見つかった
-          y_b=cc(v[i].y);
-          break;
-        }
-
-      }
-
-      //この線より右か左か探す
-      REP(i,n){
-        if(cc(v[i].y)<y_b){ //左
-          py=y_b-(rx-lx)/2.0;
-          break;
-        }
-        else if(y_b<cc(v[i].y)){ //右
-          py=y_b+(rx-lx)/2.0;
-          break;
-        }
-      }
-
-    }
-    else{
-      py=(ly+ry)/2.0;
-
-      long x_b=0;
-      //1本確定してるxの線を探す
-      set<long> xx;
-      REP(i,n){
-        if(xx.find(cc(v[i].x))==xx.end()){
-          xx.insert(cc(v[i].x));
-        }
-        else{ //見つかった
-          x_b=cc(v[i].x);
-          break;
-        }
-
-        //printf("? %ld\n", cc(v[i].x));
-      }
-      //printf("x_b = %ld\n", x_b);
-
-      //この線より右か左か探す
-      REP(i,n){
-        if(cc(v[i].x)<x_b){ //左
-          px=x_b-(ry-ly)/2.0;
-          break;
-        }
-        else if(x_b<cc(v[i].x)){ //右
-          px=x_b+(ry-ly)/2.0;
-          break;
-        }
-      }
-    }
-    //printf("px : %lf\npy : %lf\n",px,py);
-
-    px/=q2;
-    py/=q2;
-    t=M_PI*7/4;
-    double ansx=px*cos(t)-py*sin(t);
-    double ansy=px*sin(t)+py*cos(t);
-    //printf("  %lf  %lf\n",ansx,ansy);
-
-    printf("%ld %ld\n", cc(ansx), cc(ansy));
-  }
-
-  return 0;
+    printf("%d %d\n", ans.x, ans.y);
+    return 0;
 }
