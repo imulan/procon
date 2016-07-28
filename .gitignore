@@ -3,7 +3,9 @@
 *.txt
 *.class
 .DS_Store
+
 /hackerrank/ProjectEuler/**
+
 /topcoder/contestapplet.conf
 /topcoder/contestapplet.conf.bak
 /topcoder/ContestAppletProd.jnlp
@@ -11,3 +13,9 @@
 /topcoder/SRM/**/*.html
 /topcoder/SRM/**/*.sample
 /topcoder/SRM/**/*.bak.0
+
+/icpc/2016d/*
+!/icpc/2016d/*.cpp
+
+/icpc/2016p/*
+!/icpc/2016p/*.cpp
