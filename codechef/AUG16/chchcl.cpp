@@ -12,6 +12,16 @@ typedef long long ll;
 
 int main()
 {
+    int T;
+    cin >>T;
+    rep(times,T)
+    {
+        int n,m;
+        cin >>n >>m;
 
+        string ans="Yes";
+        if(n%2==1 && m%2==1) ans="No";
+        cout << ans << endl;
+    }
     return 0;
 }
