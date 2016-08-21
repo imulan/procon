@@ -92,14 +92,11 @@ int main()
     rep(i,now) z.pb(i+1);
     rep(i,n) if(y[i]>now) z.pb(y[i]);
 
-    // rep(i,n) printf(" %d\n", z[i]);
-    // rep(i,n) printf("  %d\n", x[z[i]-1]);
-
-    for(int j=n-1; j>now; --j)
+    for(int i=n-1; i>now; --i)
     {
-        if(z[j]<z[j-1])
+        if(z[i]<z[i-1])
         {
-            swap(z[j],z[j-1]);
+            swap(z[i],z[i-1]);
             ++ct;
         }
         if(ct==a/2) break;
@@ -108,6 +105,7 @@ int main()
     rep(i,n)
     {
         if(i) printf(" ");
+        //元の数値に変換して表示
         printf("%d", x[z[i]-1]);
     }
     printf("\n");
