@@ -21,6 +21,7 @@ int main()
     rep(i,n) scanf(" %d", &x[i]);
     cin >>L;
 
+    // ダブリング
     rep(i,n) r[0][i]=upper_bound(all(x), x[i]+L)-x.begin()-1;
     for(int i=1; i<18; ++i)rep(j,n) r[i][j]=r[i-1][r[i-1][j]];
 
@@ -44,7 +45,7 @@ int main()
                 ans+=1<<i;
             }
         }
-        while(now<b)
+        if(now<b)
         {
             now=r[0][now];
             ++ans;
