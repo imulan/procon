@@ -88,8 +88,6 @@ int main()
         if(Pair[i]>10000000000LL) Pair[i]=INF;
     }
 
-    // rep(i,n) printf(" %lld, norm: %lld, pair: %lld\n", s[i], Norm[i], Pair[i]);
-
     int one=0;
     //normの値,個数
     map<ll,int> Norm_count;
