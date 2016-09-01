@@ -1,6 +1,6 @@
 # Links
 
-Facebook Hacker Cupの各ラウンドへのリンク
+Links for each round in Facebook Hacker Cup
 
 ## 2016
 - [Final Round](https://www.facebook.com/hackercup/round/865985430136363/)
@@ -31,6 +31,7 @@ Facebook Hacker Cupの各ラウンドへのリンク
 - [Qualification Round](https://www.facebook.com/hackercup/round/185564241586420/)
 
 ## 2012
+- Final Round (not found yet)
 - [Round 3](https://www.facebook.com/hackercup/round/222291111185610/)
 - [Round 2](https://www.facebook.com/hackercup/round/154897681286317/)
 - [Round 1](https://www.facebook.com/hackercup/round/225705397509134/)
