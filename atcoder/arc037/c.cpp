@@ -9,8 +9,6 @@ typedef long long ll;
 #define fi first
 #define se second
 
-const int N=30001;
-
 int main()
 {
     int n;
