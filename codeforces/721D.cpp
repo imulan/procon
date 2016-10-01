@@ -66,7 +66,6 @@ int main()
                     --k;
                     a[plus_idx]-=x;
                 }
-
             }
         }
         else
@@ -78,7 +77,6 @@ int main()
                     --k;
                     a[plus_idx]-=x;
                 }
-
             }
             if(plus_idx==-1)
             {
