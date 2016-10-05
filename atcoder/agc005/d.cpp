@@ -13,7 +13,7 @@ typedef pair<int,int> pi;
 
 const ll mod=924844033;
 
-ll dp[4001][4001][2]={0};
+ll dp[4002][2002][2]={0};
 ll fact[2001];
 
 int main()
@@ -58,7 +58,7 @@ int main()
     dp[0][0][0]=1;
     rep(i,E)
     {
-        rep(j,i+1)
+        rep(j,min(2001,i+1))
         {
             // i番目の辺を使う
             (dp[i+1][j+1][1] += dp[i][j][0]) %= mod;
