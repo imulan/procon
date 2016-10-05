@@ -53,8 +53,7 @@ int main()
     }
 
     int E=edge.size();
-    // rep(i,E) printf(" edge %d = (%d,%d) , prev=%d\n", i,edge[i].fi,edge[i].se+n, (int)conneced_prev[i]);
-
+    
     dp[0][0][0]=1;
     rep(i,E)
     {
