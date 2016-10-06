@@ -26,7 +26,7 @@ int main()
 
     vector<bool> vis(2*n,false);
     vector<pi> edge;
-    vector<bool> conneced_prev;
+    vector<bool> connected_prev;
     rep(i,n)
     {
         if(vis[i]) continue;
@@ -38,7 +38,7 @@ int main()
         if(jj>=n) continue;
 
         edge.pb(pi(ii,jj));
-        conneced_prev.pb(false);
+        connected_prev.pb(false);
         while(1)
         {
             if(ii<jj) ii+=2*k;
@@ -47,13 +47,13 @@ int main()
             if(ii>=n || jj>=n) break;
 
             edge.pb(pi(ii,jj));
-            conneced_prev.pb(true);
+            connected_prev.pb(true);
             vis[ii]=vis[jj+n]=true;
         }
     }
 
     int E=edge.size();
-    
+
     dp[0][0][0]=1;
     rep(i,E)
     {
@@ -61,7 +61,7 @@ int main()
         {
             // i番目の辺を使う
             (dp[i+1][j+1][1] += dp[i][j][0]) %= mod;
-            if(!conneced_prev[i]) (dp[i+1][j+1][1] += dp[i][j][1]) %= mod;
+            if(!connected_prev[i]) (dp[i+1][j+1][1] += dp[i][j][1]) %= mod;
 
             // i番目の辺を使わない
             (dp[i+1][j][0] += dp[i][j][0]+dp[i][j][1]) %= mod;
