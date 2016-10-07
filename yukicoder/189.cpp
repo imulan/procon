@@ -11,7 +11,6 @@ typedef long long ll;
 
 const int mod=1000000009;
 
-string m,d;
 int dp[202][1900][2];
 int x[2][1900]={0};
 int call=0;
@@ -43,6 +42,7 @@ void calc(string s)
 
 int main()
 {
+    string m,d;
     cin >>m >>d;
     calc(m);
     calc(d);
