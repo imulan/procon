@@ -17,4 +17,5 @@ struct UF{
         return true;
     }
     int size(int v){ return -d[root(v)]; }
+    bool same(int X,int Y){ return root(X)==root(Y); }
 };
