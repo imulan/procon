@@ -60,9 +60,8 @@ int main()
         else
         {
             // 左に区間がある
-            r--;
             auto l=r;
-            r++;
+            l--;
 
             pi L=*l;
 
@@ -75,11 +74,7 @@ int main()
                     if(x<L.se) suc=false;
                     else if(x==L.se)
                     {
-                        if(s.size()==1)
-                        {
-                            // printf(" ---FULL---\n");
-                            full=true;
-                        }
+                        if(s.size()==1) full=true;
                         else suc=false;
                     }
                 }
