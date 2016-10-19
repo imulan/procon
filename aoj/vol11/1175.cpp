@@ -27,13 +27,13 @@ inline bool available(int p, int state)
     return true;
 }
 
-unordered_map<int,int> dp;
-int dfs(int state)
+char dp[1<<24];
+char dfs(int state)
 {
-    if(dp.find(state) != dp.end()) return dp[state];
+    if(dp[state]>=0) return dp[state];
     if(__builtin_popcount(state)<2) return 0;
 
-    int ret=0;
+    char ret=(char)0;
     rep(i,n)
     {
         if(state>>i&1)
@@ -48,7 +48,7 @@ int dfs(int state)
                 if(state>>j&1)
                 {
                     if(!available(j,state)) continue;
-                    ret = max(ret,dfs(state-(1<<i)-(1<<j))+2);
+                    ret = max(ret,(char)(dfs(state-(1<<i)-(1<<j))+2));
                 }
             }
         }
@@ -62,8 +62,8 @@ int main()
     while(cin >>n,n)
     {
         rep(i,n) scanf(" %d %d %d %d", &x[i], &y[i], &r[i], &c[i]);
-        dp.clear();
-        cout << dfs((1<<n)-1) << endl;
+        memset(dp,(char)-1,sizeof(dp));
+        cout << (int)dfs((1<<n)-1) << endl;
     }
     return 0;
 }
