@@ -53,12 +53,9 @@ int main()
             --b;
             if(c=='A')
             {
-                if(!uf.same(a,n+b) && !uf.same(a,b)) printf("Not sure yet.\n");
-                else
-                {
-                    if(uf.same(a,b)) printf("In the same gang.\n");
-                    else if(uf.same(a,n+b)) printf("In different gangs.\n");
-                }
+                if(uf.same(a,b)) printf("In the same gang.\n");
+                else if(uf.same(a,n+b)) printf("In different gangs.\n");
+                else printf("Not sure yet.\n");
             }
             else
             {
