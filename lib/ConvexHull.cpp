@@ -54,3 +54,28 @@ vector<Point> make_convex_hull(const vector<Point> &points)
     qs.resize(k-1);
     return qs;
 }
+
+double caliper(const vector<Point> &points)
+{
+    vector<Point> convex=make_convex_hull(points);
+    int n=convex.size();
+    if(n==2) return (convex[0]-convex[1]).dot(convex[0]-convex[1]);
+
+    int i=0, j=0;
+    for(int k=0; k<n; ++k)
+    {
+        if(convex[k]<convex[i]) i=k;
+        if(convex[j]<convex[k]) j=k;
+    }
+
+    // squared-distance
+    double ret=0;
+    int si=i,sj=j;
+    while(i!=sj || j!=si)
+    {
+        ret=max(ret,(convex[i]-convex[j]).dot(convex[i]-convex[j]));
+        if((convex[(i+1)%n]-convex[i]).det(convex[(j+1)%n]-convex[j])<0) i=(i+1)%n;
+        else j=(j+1)%n;
+    }
+    return ret;
+}
