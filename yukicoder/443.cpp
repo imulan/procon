@@ -65,12 +65,10 @@ int main()
         }
     }
 
-    printf("%d\n", t);
     int ans=-1;
     vector<int> div=divisor(t);
     rep(i,div.size())
     {
-        printf(" dd=%d\n", div[i]);
         if(check(s,div[i]))
         {
             ans=div[i];
