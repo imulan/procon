@@ -110,10 +110,6 @@ int main()
     dfs(bicomp[largest_group_id][0]);
 
     printf("%d\n", ans);
-    rep(i,m)
-    {
-        if(group[e[i].fi]!=group[e[i].se] &&  group[e[i].fi]==largest_group_id) swap(e[i].fi, e[i].se);
-        printf("%d %d\n", e[i].fi+1, e[i].se+1);
-    }
+    rep(i,m) printf("%d %d\n", e[i].fi+1, e[i].se+1);
     return 0;
 }
