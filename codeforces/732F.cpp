@@ -107,11 +107,7 @@ int main()
         rep(j,B) group[bicomp[i][j]]=i;
     }
 
-    // printf("bridge\n");
-    // rep(i,bridge.size()) printf(" %d %d\n", bridge[i].fi+1, bridge[i].se+1);
-
     dfs(bicomp[largest_group_id][0]);
-
 
     printf("%d\n", ans);
     rep(i,m)
