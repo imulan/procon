@@ -1,6 +1,7 @@
 #include <cstdio>
 #include <iostream>
 #include <algorithm>
+#include <vector>
 #include <cmath>
 using namespace std;
 
@@ -48,14 +49,13 @@ struct Point{
     }
 };
 
-int n;
-Point ps[50000],qs[100000];
-int C;
-
-void make_convex_hull()
+vector<Point> make_convex_hull(const vector<Point> &points)
 {
-    sort(ps,ps+n);
+    vector<Point> ps(points);
+    int n=ps.size();
+    sort(ps.begin(),ps.end());
     int k=0;
+    vector<Point> qs(n*2);
     // 下側凸包
     for(int i=0; i<n; ++i){
         while(k>1 && (qs[k-1]-qs[k-2]).det(ps[i]-qs[k-1])<=0) --k;
@@ -66,39 +66,41 @@ void make_convex_hull()
         while(k>t && (qs[k-1]-qs[k-2]).det(ps[i]-qs[k-1])<=0) --k;
         qs[k++]=ps[i];
     }
-    C=k-1;
+    qs.resize(k-1);
+    return qs;
 }
 
-double caliper(int b)
+double caliper(vector<Point> &convex,int b)
 {
+    int n=convex.size();
+
+    int i=0, j=i+b+1;
     double ret=0;
-    bool move_i=false;
-    int i=0, j=b+1;
     while(1)
     {
-        // printf("i= %d, j= %d\n", i,j);
-        ret=max(ret,fabs((qs[i]-qs[j]).det(qs[(i+b)%C]-qs[j])/2));
-        if((qs[(i+b)%C]-qs[i]).det(qs[(j+1)%C]-qs[j])<0)
+        ret=max(ret,fabs((convex[i]-convex[j]).det(convex[(i+b)%n]-convex[j])/2));
+        if((convex[(i+b)%n]-convex[i]).det(convex[(j+1)%n]-convex[j])<0)
         {
-            i=(i+1)%C;
-            move_i=true;
+            i=(i+1)%n;
+            if(i==0) break;
         }
-        else j=(j+1)%C;
-
-        if(move_i && i==0) break;
+        else j=(j+1)%n;
     }
     return ret;
 }
 
 int main()
 {
+    int n;
     while(scanf(" %d", &n),(n!=-1))
     {
+        vector<Point> ps(n);
         rep(i,n) scanf(" %lf %lf", &ps[i].x, &ps[i].y);
-        make_convex_hull();
+        vector<Point> c=make_convex_hull(ps);
 
+        int C=c.size();
         double ans=0;
-        for(int i=1; i<=C/2; ++i) ans=max(ans,caliper(i));
+        for(int i=1; i<=C/2; ++i) ans=max(ans,caliper(c,i));
         printf("%.2f\n", ans);
     }
     return 0;
