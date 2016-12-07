@@ -56,7 +56,7 @@ vector<vector<pi>> dG;
 
 void dfs(int v)
 {
-    rep(i,G[v].size())
+    rep(i,dG[v].size())
     {
         int to = dG[v][i].fi;
         int e_id = dG[v][i].se;
