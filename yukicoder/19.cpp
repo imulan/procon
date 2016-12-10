@@ -45,8 +45,6 @@ int scc(){
     return k;
 }
 
-
-
 int main()
 {
     int n;
