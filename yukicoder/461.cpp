@@ -20,14 +20,12 @@ struct line
 
 inline int intersect_inside(const line& m, const line& n)
 {
-    if(m.a*(n.a+n.b) + n.a*(m.a+m.b) > (m.a+m.b)*(n.a+n.b)) return 1;
-    return 0;
+    return (m.a*(n.a+n.b) + n.a*(m.a+m.b) > (m.a+m.b)*(n.a+n.b));
 }
 
 inline int intersect_onedge(const line& m, const line& n)
 {
-    if(m.a*(n.a+n.b) + n.a*(m.a+m.b) == (m.a+m.b)*(n.a+n.b)) return 1;
-    return 0;
+    return (m.a*(n.a+n.b) + n.a*(m.a+m.b) == (m.a+m.b)*(n.a+n.b));
 }
 
 inline line crosspoint(const line& pp, const line& qq)
