@@ -42,17 +42,15 @@ struct StarrySkyTree{
     {
         _add(a,b,x,0,0,n);
     }
-
     //内部的に投げられるクエリ
     ll _query(long a, long b, long k, long l, long r){
         if(r<=a || b<=l) return 0;
 
         if(a<=l && r<=b) return dat[k]+segAdd[k];
-        else{
-            ll vl=_query(a,b,2*k+1,l,(l+r)/2);
-            ll vr=_query(a,b,2*k+2,(l+r)/2,r);
-            return max(vl,vr)+segAdd[k];
-        }
+
+        ll vl=_query(a,b,2*k+1,l,(l+r)/2);
+        ll vr=_query(a,b,2*k+2,(l+r)/2,r);
+        return max(vl,vr)+segAdd[k];
     }
     //[a,b)の最大値を求める
     ll query(long a, long b){
@@ -60,23 +58,22 @@ struct StarrySkyTree{
     }
 };
 
-typedef pair<long,long> pi;
-typedef pair<pi,long> P;
+typedef pair<int,int> pi;
+typedef pair<pi,int> P;
 
 int main()
 {
-    int n;
-    long w,h;
-    while(scanf(" %d %ld %ld", &n, &w, &h) != EOF)
+    int n,w,h;
+    while(scanf(" %d %d %d", &n, &w, &h) != EOF)
     {
         --w;
         --h;
 
         vector<P> p(n);
-        rep(i,n) scanf(" %ld %ld %ld", &p[i].fi.fi, &p[i].fi.se, &p[i].se);
+        rep(i,n) scanf(" %d %d %d", &p[i].fi.fi, &p[i].fi.se, &p[i].se);
         sort(all(p));
 
-        vector<long> x,y;
+        vector<int> x,y;
         rep(i,n)
         {
             x.pb(p[i].fi.fi);
@@ -92,56 +89,31 @@ int main()
 
         StarrySkyTree st(Y);
 
-        int idx=0;
-        while(idx<n && p[0].fi.fi+w>=p[idx].fi.fi)
-        {
-            int lb = lower_bound(all(y),p[idx].fi.se-h) - y.begin();
-            int rb = lower_bound(all(y),p[idx].fi.se) - y.begin();
-            st.add(lb,rb+1, p[idx].se);
+        int ans=0;
+        rep(i,n) ans=max(ans,p[i].se);
 
-            // printf(" idx %d (%d, %d)\n", idx,lb,rb);
-            ++idx;
-        }
-        // printf("idx %d\n", idx);
-
-        ll ans=1;
-        int now=0;
-
+        int idx=0,now=0;
         rep(i,X)
         {
-            // printf("i= %d query : %d\n", i,st.query(0,Y));
-            // rep(j,Y) printf(" j= %d: %lld\n", j,st.query(j,j+1));
-
-            int tnow=now;
-            while(now<n && p[now].fi.fi==x[i])
-            {
-                int lb = lower_bound(all(y),p[now].fi.se-h) - y.begin();
-                int rb = lower_bound(all(y),p[now].fi.se) - y.begin();
-                ans = max(ans, st.query(lb,rb+1));
-                ++now;
-
-                // printf(" query i= %d:  %lld\n", i,st.query(lb,rb+1));
-            }
-
-            now=tnow;
-            while(now<n && p[now].fi.fi==x[i])
-            {
-                int lb = lower_bound(all(y),p[i].fi.se-h) - y.begin();
-                int rb = lower_bound(all(y),p[i].fi.se) - y.begin();
-                st.add(lb,rb+1, -p[i].se);
-                ++now;
-            }
-
-            while(i+1<X && idx<n && x[i+1]+w>=p[idx].fi.fi)
+            while(idx<n && p[idx].fi.fi<=(ll)x[i]+w)
             {
                 int lb = lower_bound(all(y),p[idx].fi.se-h) - y.begin();
                 int rb = lower_bound(all(y),p[idx].fi.se) - y.begin();
                 st.add(lb,rb+1, p[idx].se);
-
                 ++idx;
             }
+
+            ans = max(ans, (int)st.query(0,Y));
+
+            while(now<n && p[now].fi.fi==x[i])
+            {
+                int lb = lower_bound(all(y),p[now].fi.se-h) - y.begin();
+                int rb = lower_bound(all(y),p[now].fi.se) - y.begin();
+                st.add(lb,rb+1, -p[now].se);
+                ++now;
+            }
         }
-        printf("%lld\n", ans);
+        printf("%d\n", ans);
     }
     return 0;
 }
