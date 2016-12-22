@@ -21,11 +21,10 @@ struct MaxSegTree{
         if(r<=a || b<=l) return LLONG_MIN;
 
         if(a<=l && r<=b) return dat[k];
-        else{
-            ll vl=_query(a,b,2*k+1,l,(l+r)/2);
-            ll vr=_query(a,b,2*k+2,(l+r)/2,r);
-            return max(vl,vr);
-        }
+
+        ll vl=_query(a,b,2*k+1,l,(l+r)/2);
+        ll vr=_query(a,b,2*k+2,(l+r)/2,r);
+        return max(vl,vr);
     }
     //[a,b)の最大値を求める
     ll query(long a, long b){
