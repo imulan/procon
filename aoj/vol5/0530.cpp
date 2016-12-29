@@ -9,8 +9,6 @@ typedef long long ll;
 #define fi first
 #define se second
 
-struct state{ int r,s,jump; };
-
 const ll INF=12345678901234LL;
 // i行目, j番目の石, k回一行飛ばしジャンプ使用
 ll dp[150][10][150];
@@ -31,60 +29,34 @@ int main()
 
         fill(dp[0][0],dp[150][0],INF);
 
-        queue<state> que;
         // 0行目
-        rep(i,k[0])
-        {
-            que.push(state{0,i,0});
-            dp[0][i][0]=0;
-        }
+        rep(i,k[0]) dp[0][i][0]=0;
         // 1行目
-        if(m>0)
-        {
-            rep(i,k[1])
-            {
-                que.push(state{1,i,1});
-                dp[1][i][1]=0;
-            }
-        }
+        if(m>0) rep(i,k[1]) dp[1][i][1]=0;
 
         ll ans=INF;
-
-        while(!que.empty())
+        rep(r,n)rep(s,k[r])rep(j,min(76,m+1))
         {
-            state now=que.front();
-            que.pop();
-
-            if(now.r == n-1 || (now.r == n-2 && now.jump < m))
+            if(r==n-1 || (r==n-2 && j<m))
             {
-                ans = min(ans, dp[now.r][now.s][now.jump]);
+                ans = min(ans, dp[r][s][j]);
                 continue;
             }
 
             // 普通のジャンプ
-            rep(i,k[now.r+1])
+            rep(i,k[r+1])
             {
-                ll add=(d[now.r][now.s]+d[now.r+1][i])*abs(x[now.r][now.s]-x[now.r+1][i]);
-
-                if(dp[now.r+1][i][now.jump] > dp[now.r][now.s][now.jump]+add)
-                {
-                    dp[now.r+1][i][now.jump] = dp[now.r][now.s][now.jump]+add;
-                    que.push(state{now.r+1,i,now.jump});
-                }
+                ll add=(d[r][s]+d[r+1][i])*abs(x[r][s]-x[r+1][i]);
+                dp[r+1][i][j] = min(dp[r+1][i][j], dp[r][s][j]+add);
             }
 
             // 一行飛ばしのジャンプ
-            if(now.jump<m)
+            if(j<m)
             {
-                rep(i,k[now.r+2])
+                rep(i,k[r+2])
                 {
-                    ll add=(d[now.r][now.s]+d[now.r+2][i])*abs(x[now.r][now.s]-x[now.r+2][i]);
-
-                    if(dp[now.r+2][i][now.jump+1] > dp[now.r][now.s][now.jump]+add)
-                    {
-                        dp[now.r+2][i][now.jump+1] = dp[now.r][now.s][now.jump]+add;
-                        que.push(state{now.r+2,i,now.jump+1});
-                    }
+                    ll add=(d[r][s]+d[r+2][i])*abs(x[r][s]-x[r+2][i]);
+                    dp[r+2][i][j+1] = min(dp[r+2][i][j+1], dp[r][s][j]+add);
                 }
             }
         }
