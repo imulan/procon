@@ -3,8 +3,8 @@ struct BIT{
     int n; vector<ll> bit;
     // 初期化
     BIT(int _n){
-        n = _n+1;
-        bit = vector<ll>(n,0);
+        n = _n;
+        bit = vector<ll>(n+1,0);
     }
     // sum of [1,i]
     ll sum(int i){
