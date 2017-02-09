@@ -15,7 +15,6 @@ typedef vector<int> vi;
 typedef vector<bool> vb;
 typedef pair<int,int> edge;
 
-typedef pair<edge,int> weighted_edge;
 typedef pair<int,int> pi;
 
 vector<vi> G;
@@ -79,8 +78,8 @@ void solve()
 
     // もとのグラフでsとtが繋がっているかチェック
     queue<int> que;
-    vector<bool> vis(n,false);
-    vector<int> par(n,-1);
+    vb vis(n,false);
+    vi par(n,-1);
     vis[s]=true;
     que.push(s);
     while(!que.empty())
@@ -108,7 +107,7 @@ void solve()
 
     int ans = INF;
     int c = -1;
-    vector<int> ans_edge;
+    vi ans_edge;
 
     vector<edge> bridge;
     vector<vi> bicomp;
@@ -161,8 +160,8 @@ void solve()
             G[y[j]].pb(x[j]);
         }
 
-        vis = vector<bool>(n,false);
-        par = vector<int>(n,-1);
+        vis = vb(n,false);
+        par = vi(n,-1);
         que.push(s);
         vis[s]=true;
         while(!que.empty())
