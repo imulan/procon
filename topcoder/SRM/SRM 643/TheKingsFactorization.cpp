@@ -9,21 +9,9 @@ typedef long long ll;
 #define fi first
 #define se second
 
-const ll LIM = 1000000000LL;
-const int S = 1000000;
-
 class TheKingsFactorization {
     public:
-    bool prime[S+1]={};
-
     vector<long long> getVector(long long N, vector<long long> primes) {
-        fill(prime,prime+S+1,true);
-        prime[0]=prime[1]=false;
-        for(int i=2; i<=S; ++i)
-        {
-            if(prime[i]) for(int j=2*i; j<=S; j+=i) prime[j]=false;
-        }
-
         vector<ll> ret(primes);
         int P = primes.size();
 
