@@ -161,51 +161,23 @@ void solve()
         if(d>INF) break;
     }
 
-    // インデックスpr
-    ll div_count=1;
-    ll tmp=pr;
-    while(tmp%2==0)
+    if(pr<=ql)
     {
-        tmp/=2;
-        ++div_count;
-    }
-    string s=to_string(div_count * div_count);
-    ll components = len(pr,K)-L+1;
-
-    // cout << "pr:s = " << s << endl;
-    // printf("components = %lld\n", components);
-
-    int idx=s.size()-1;
-    while(components>0)
-    {
-        int v=s[idx]-'0';
-        if(v==0) v=10;
-
-        ans1+=v;
-        (ans2*=v)%=mod;
-
-        --idx;
-        --components;
-    }
-
-    // インデックスql+1
-    // まずql+1が存在するか確認
-    if(ql+1<=calc_size(K))
-    {
-        div_count=1;
-        tmp=ql+1;
+        // インデックスpr
+        ll div_count=1;
+        ll tmp=pr;
         while(tmp%2==0)
         {
             tmp/=2;
             ++div_count;
         }
-        s=to_string(div_count * div_count);
-        components = R-len(ql,K);
+        string s=to_string(div_count * div_count);
+        ll components = len(pr,K)-L+1;
 
-        // cout << "ql+1:s = " << s << endl;
+        // cout << "pr:s = " << s << endl;
         // printf("components = %lld\n", components);
 
-        idx=0;
+        int idx=s.size()-1;
         while(components>0)
         {
             int v=s[idx]-'0';
@@ -214,8 +186,60 @@ void solve()
             ans1+=v;
             (ans2*=v)%=mod;
 
-            ++idx;
+            --idx;
             --components;
+        }
+
+        // インデックスql+1
+        // まずql+1が存在するか確認
+        if(ql+1<=calc_size(K))
+        {
+            div_count=1;
+            tmp=ql+1;
+            while(tmp%2==0)
+            {
+                tmp/=2;
+                ++div_count;
+            }
+            s=to_string(div_count * div_count);
+            components = R-len(ql,K);
+
+            // cout << "ql+1:s = " << s << endl;
+            // printf("components = %lld\n", components);
+
+            idx=0;
+            while(components>0)
+            {
+                int v=s[idx]-'0';
+                if(v==0) v=10;
+
+                ans1+=v;
+                (ans2*=v)%=mod;
+
+                ++idx;
+                --components;
+            }
+        }
+    }
+    else
+    {
+        ll div_count=1;
+        ll tmp=pr;
+        while(tmp%2==0)
+        {
+            tmp/=2;
+            ++div_count;
+        }
+        string s=to_string(div_count * div_count);
+
+        ll pre = len(ql,K);
+        for(ll i=L; i<=R; ++i)
+        {
+            int v=s[i-pre]-'0';
+            if(v==0) v=10;
+
+            ans1+=v;
+            (ans2*=v)%=mod;
         }
     }
 
