@@ -94,8 +94,6 @@ int main()
             else r=m;
         }
 
-        // printf(" i = %d , l= %d\n", i,l);
-
         int t=l;
         int now=i;
         for(int j=LOG_N-1; j>=0; --j)
@@ -104,7 +102,6 @@ int main()
             if(t-sz>=0)
             {
                 if(now!=-1) now = par[j][now];
-                // printf("now = %d\n", now);
                 t -= sz;
             }
         }
@@ -113,8 +110,6 @@ int main()
         {
             ++ans[par[0][i]];
             if(par[0][now]!=-1) --ans[par[0][now]];
-
-            // printf(" %d -> %d\n", par[0][i], par[0][now]);
         }
     }
 
