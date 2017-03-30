@@ -1,0 +1,1 @@
+print('yukicoder'[input().index('?')])
