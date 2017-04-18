@@ -48,17 +48,13 @@ int main()
         int a,b;
         ll r;
         scanf(" %d %d %lld", &a, &b, &r);
-        --a;
-        --b;
-        e[i] = edge(r,pi(a,b));
+        e[i] = edge(r,pi(a-1,b-1));
     }
     sort(all(e));
 
-    ll c_sum=0;
-    rep(i,n) c_sum += c[i];
-    ll e_sum=0;
+    ll ans=0;
+    rep(i,n) ans += c[i];
 
-    ll ans=c_sum;
     UF uf(n);
     rep(i,m)
     {
@@ -73,14 +69,12 @@ int main()
 
             if(cost - max_c >= 0) continue;
 
-            c_sum -= max_c;
-            e_sum += cost;
+            ans -= max_c;
+            ans += cost;
 
             uf.unite(a,b);
             c[ra]=c[rb]=min_c;
         }
-
-        ans = min(ans,c_sum+e_sum);
     }
 
     printf("%lld\n", ans);
