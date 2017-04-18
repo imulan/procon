@@ -20,7 +20,7 @@ void dfs(int v){
 void rdfs(int v, int k){
     used[v]=true;
     cmp[v]=k;
-    rep(i,rG[v].size())if(!used[rG[v][i]]) rdfs(rG[v][i],k++);
+    rep(i,rG[v].size())if(!used[rG[v][i]]) rdfs(rG[v][i],k);
 }
 
 int scc(){
