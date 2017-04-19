@@ -1,7 +1,7 @@
 // ※グラフが連結であると仮定しています
 
 int V; // 頂点数 TODO:initialize
-const int MAX_V = 100000; // 最大の頂点数 TODO:initialize
+const int MAX_V = ; // 最大の頂点数 TODO:initialize
 
 vector<int> G[MAX_V]; // 隣接リスト表現
 bool vis[MAX_V];
