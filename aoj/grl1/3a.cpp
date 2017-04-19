@@ -1,74 +1,86 @@
-#include <cstdio>
-#include <iostream>
-#include <vector>
-#include <set>
+#include <bits/stdc++.h>
 using namespace std;
 
-#define M 100000
+typedef long long ll;
+#define rep(i,n) for(int (i)=0;(i)<(int)(n);++(i))
+#define each(itr,c) for(__typeof(c.begin()) itr=c.begin(); itr!=c.end(); ++itr)
+#define all(x) (x).begin(),(x).end()
+#define pb push_back
+#define fi first
+#define se second
 
-vector<int> G[M];
-int N;
-bool visited[M];
-int prenum[M], parent[M], lowest[M], timer;
+int V; // 頂点数 TODO:initialize
+const int MAX_V = 100000; // 最大の頂点数 TODO:initialize
 
-void dfs(int current, int prev){
-  //ノードcurrentを訪問したあとの処理
-  prenum[current] = lowest[current] = timer;
-  timer++;
+vector<int> G[MAX_V]; // 隣接リスト表現
+bool vis[MAX_V];
+int timer, root;
+int prenum[MAX_V]; // DFSの訪問順
+int parent[MAX_V]; // DFSによって出来る木の親
+int lowest[MAX_V]; // DFS木において頂点i以下にあるmin(prenum)
 
-  visited[current] = true;
+bool ap[MAX_V]; // 関節点かどうか
 
-  int next;
-  for(int i=0; i<G[current].size(); ++i){
-    next = G[current][i];
+void dfs(int u, int prev)
+{
+    prenum[u] = timer;
+    lowest[u] = timer;
+    ++timer;
 
-    if( !visited[next] ){
-      //ノードcurrentからノードnextへ訪問する直前の処理
-      parent[next] = current;
+    vis[u] = true;
+    int child = 0;
 
-      dfs(next, current);
-
-      //ノードnextの探索が終了したあとの処理
-      lowest[current] = min(lowest[current], lowest[next]);
+    rep(i,G[u].size())
+    {
+        int v = G[u][i];
+        if(!vis[v])
+        {
+            parent[v] = u;
+            ++child;
+            dfs(v,u);
+            lowest[u] = min(lowest[u],lowest[v]);
+        }
+        else if(u!=prev)
+        {
+            lowest[u] = min(lowest[u], prenum[v]);
+        }
     }
-    else if( next != prev){ //エッジcurrent --> next がBack-Edgeの場合
-      lowest[current] = min(lowest[current], prenum[next]);
-    }
 
-  }
-  //ノードcurrent の探索が終了したあとの処理
+    if(u==root)
+    {
+        if(child>=2) ap[u]=true;
+    }
+    else
+    {
+        if(prev!=root && prenum[prev]<=lowest[u]) ap[prev]=true;
+    }
 }
 
-void art_points(){
-  for(int i=0; i<N; ++i) visited[i] = false;
-  timer=1;
+void detect_ap(int _root)
+{
+    memset(vis,0,sizeof(vis));
+    memset(ap,0,sizeof(ap));
 
-  //lowestの計算
-  dfs(0, -1); //0 == root
-
-  set<int> ap;
-  int np=0;
-  for(int i=1; i<N; ++i){
-    int p = parent[i];
-    if(p==0) np++;
-    else if(prenum[p] <= lowest[i]) ap.insert(p);
-  }
-
-  if(np>1) ap.insert(0);
-  for(set<int>::iterator it = ap.begin(); it!=ap.end(); ++it) cout << *it << endl;
+    root = _root;
+    timer = 1;
+    dfs(root,-1);
 }
 
-int main(){
-  int m;
-  scanf(" %d %d", &N, &m);
+int main()
+{
+    int v,e;
+    scanf(" %d %d", &v ,&e);
+    while(e--)
+    {
+        int s,t;
+        scanf(" %d %d", &s, &t);
+        G[s].pb(t);
+        G[t].pb(s);
+    }
 
-  for(int i=0; i<m; ++i){
-    int s, t;
-    scanf(" %d %d", &s, &t);
-    G[s].push_back(t);
-    G[t].push_back(s);
-  }
+    V=v;
+    detect_ap(0);
 
-  art_points();
-
+    rep(i,v)if(ap[i]) printf("%d\n", i);
+    return 0;
 }
