@@ -7,7 +7,6 @@ using ll = long long;
 #define fi first
 #define se second
 
-
 class ${ClassName} {
     public:
     ${Method.ReturnType} ${Method.Name}(${Method.Params}) {
