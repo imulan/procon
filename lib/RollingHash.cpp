@@ -1,7 +1,6 @@
 struct RollingHash{
     static const int MD = 3;
-    const vector<ll> hash_base{1009,1021,1013};
-    const vector<ll> hash_mod{1000000009,1000000007,1000000021};
+    static const vector<ll> hash_base, hash_mod;
 
     int n;
     vector<ll> hs[MD], pw[MD];
@@ -21,11 +20,11 @@ struct RollingHash{
         }
     }
 
-    // 1-index
     ll hash_value(int l, int r, int i){
         return ((hs[i][r] - hs[i][l]*pw[i][r-l])%hash_mod[i]+hash_mod[i])%hash_mod[i];
     }
 
+    // 1-index
     bool match(int l1, int r1, int l2, int r2){
         bool ret = true;
         for(int i=0; i<MD; ++i) ret &= (hash_value(l1-1,r1,i) == hash_value(l2-1,r2,i));
@@ -38,3 +37,5 @@ struct RollingHash{
         return ret;
     }
 };
+const vector<ll> RollingHash::hash_base{1009,1021,1013};
+const vector<ll> RollingHash::hash_mod{1000000009,1000000007,1000000021};
