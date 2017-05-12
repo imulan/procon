@@ -7,20 +7,16 @@ using ll = long long;
 #define fi first
 #define se second
 
-const int N=3700000;
+const int N=3630000;
 const int INF=123456789;
 
 int f[11];
-int dp1[N], dp2[N];
+int dp[2][N];
 
-map<vector<int>,int> M;
 inline int get_idx(const vector<int> &a)
 {
-    if(M.count(a)) return M[a];
-
     int n = a.size();
     int ret=0;
-
     vector<bool> use(n,false);
     rep(i,n)
     {
@@ -31,7 +27,7 @@ inline int get_idx(const vector<int> &a)
 
         use[a[i]]=true;
     }
-    return M[a]=ret;
+    return ret;
 }
 
 inline vector<int> get_vec(int n, int idx)
@@ -73,61 +69,37 @@ int main()
         --a[i];
     }
 
-    int g = get_idx(a);
-    queue<int> que;
-
-    fill(dp1,dp1+N,INF);
-    dp1[0]=0;
-    que.push(0);
-    while(!que.empty())
+    rep(d,2)
     {
-        int now = que.front();
-        que.pop();
-
-        vector<int> x = get_vec(n,now);
-        // printf(" now %d\n", now);
-        rep(i,n)for(int j=i+1; j<=n; ++j)
+        int start = d?get_idx(a):0;
+        fill(dp[d],dp[d]+N,INF);
+        dp[d][start]=0;
+        queue<int> que;
+        que.push(start);
+        while(!que.empty())
         {
-            reverse(x.begin()+i, x.begin()+j);
+            int now = que.front();
+            que.pop();
 
-            int nx = get_idx(x);
-            // printf("  nx %d\n", nx);
-            if(dp1[nx]>dp1[now]+1)
+            vector<int> x = get_vec(n,now);
+            rep(i,n)for(int j=i+2; j<=n; ++j)
             {
-                dp1[nx] = dp1[now]+1;
-                if(dp1[nx]<4) que.push(nx);
+                reverse(x.begin()+i, x.begin()+j);
+
+                int nx = get_idx(x);
+                if(dp[d][nx]>dp[d][now]+1)
+                {
+                    dp[d][nx] = dp[d][now]+1;
+                    if(dp[d][nx]<4) que.push(nx);
+                }
+
+                reverse(x.begin()+i, x.begin()+j);
             }
-
-            reverse(x.begin()+i, x.begin()+j);
-        }
-    }
-
-    fill(dp2,dp2+N,INF);
-    dp2[g]=0;
-    que.push(g);
-    while(!que.empty())
-    {
-        int now = que.front();
-        que.pop();
-
-        vector<int> x = get_vec(n,now);
-        rep(i,n)for(int j=i+1; j<=n; ++j)
-        {
-            reverse(x.begin()+i, x.begin()+j);
-
-            int nx = get_idx(x);
-            if(dp2[nx]>dp2[now]+1)
-            {
-                dp2[nx] = dp2[now]+1;
-                if(dp2[nx]<4) que.push(nx);
-            }
-
-            reverse(x.begin()+i, x.begin()+j);
         }
     }
 
     int ans=9;
-    rep(i,N)if(dp1[i]<INF && dp2[i]<INF) ans=min(ans,dp1[i]+dp2[i]);
+    rep(i,N)if(dp[0][i]<INF && dp[1][i]<INF) ans=min(ans,dp[0][i]+dp[1][i]);
 
     printf("%d\n", ans);
     return 0;
