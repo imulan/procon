@@ -44,7 +44,7 @@ int min_cost_flow(int s, int t, int f){
 
         // これ以上流せない
         if(dist[t]==INF) return -1;
-        
+
         rep(v,V) h[v] += dist[v];
 
         // s-t間の最短路に沿って目一杯流す
@@ -56,7 +56,7 @@ int min_cost_flow(int s, int t, int f){
         for(int v=t; v!=s; v=prevv[v]){
             edge &e = G[prevv[v]][preve[v]];
             e.cap -= d;
-            G[v][e.rev] += d;
+            G[v][e.rev].cap += d;
         }
     }
     return res;
