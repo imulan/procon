@@ -9,6 +9,7 @@ using ll = long long;
 #define dbg(x) cout<<#x" = "<<((x))<<endl
 template<class T,class U> ostream& operator<<(ostream& o, const pair<T,U> &p){o<<"("<<p.fi<<","<<p.se<<")";return o;}
 template<class T> ostream& operator<<(ostream& o, const vector<T> &v){o<<"[";for(T t:v){o<<t<<",";}o<<"]";return o;}
+
 int main()
 {
 
