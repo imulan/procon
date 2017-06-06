@@ -1,5 +1,5 @@
 // (行き先,容量,逆辺)
-struct edge{ int to,cmp,rev; };
+struct edge{ int to,cap,rev; };
 
 const int MAX_V = ; // TODO:initialize
 const int F_INF = ; // TODO:initialize
@@ -22,7 +22,7 @@ void dinic_bfs(int s){
         que.pop();
         rep(i,G[v].size()){
             edge &e = G[v][i];
-            if(e.cap>0 && level[v] < level[e.to]){
+            if(e.cap>0 && level[e.to]<0){
                 level[e.to] = level[v]+1;
                 que.push(e.to);
             }
@@ -34,7 +34,7 @@ void dinic_bfs(int s){
 int dinic_dfs(int v, int t, int f){
     if(v==t) return f;
     for(int &i=iter[v]; i<G[v].size(); ++i){
-        edge e=G[v][i];
+        edge &e=G[v][i];
         if(e.cap>0 && level[v]<level[e.to]){
             int d = dinic_dfs(e.to,t,min(f,e.cap));
             if(d>0){
