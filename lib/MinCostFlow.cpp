@@ -12,32 +12,56 @@ int dist[MAX_V];
 int prevv[MAX_V], preve[MAX_V]; // 直前の頂点と辺
 
 void add_edge(int from, int to, int cap, int cost){
-    G[from].pb({to,cap,cost,G[to].size()});
-    G[to].pb({from,0,-cost,G[from].size()-1});
+    G[from].pb({to,cap,cost,(int)G[to].size()});
+    G[to].pb({from,0,-cost,(int)G[from].size()-1});
 }
 
 // sからtへの流量fの最小費用流(不可能なら-1)
-int min_cost_flow(int s, int t, int f){
+int min_cost_flow(int s, int t, int f, bool neg = false){
     int res = 0;
     fill(h,h+V,0);
     while(f>0){
-        // dijkstraでhを更新
         priority_queue<pi,vector<pi>,greater<pi>> pq;
         fill(dist,dist+V,INF);
         dist[s]=0;
-        pq.push(pi(0,s));
-        while(!pq.empty()){
-            pi p = pq.top();
-            pq.pop();
-            int v = p.se;
-            if(p.fi>dist[v]) continue;
-            rep(i,G[v].size()){
-                edge &e = G[v][i];
-                if(e.cap>0 && dist[e.to]>dist[v]+e.cost+h[v]-h[e.to]){
-                    dist[e.to] = dist[v]+e.cost+h[v]-h[e.to];
-                    prevv[e.to] = v;
-                    preve[e.to] = i;
-                    pq.push(pi(dist[e.to],e.to));
+        if(neg)
+        {
+            // bellman-fordでhを更新
+            neg = false;
+            bool update;
+            do{
+                update = false;
+                rep(v,V){
+                    if(dist[v] == INF) continue;
+                    rep(i,G[v].size()){
+                        edge &e = G[v][i];
+                        if(e.cap>0 && dist[e.to]>dist[v]+e.cost){
+                            dist[e.to]=dist[v]+e.cost;
+                            prevv[e.to] = v;
+                            preve[e.to] = i;
+                            update = true;
+                        }
+                    }
+                }
+            }while(update);
+        }
+        else
+        {
+            // dijkstraでhを更新
+            pq.push(pi(0,s));
+            while(!pq.empty()){
+                pi p = pq.top();
+                pq.pop();
+                int v = p.se;
+                if(p.fi>dist[v]) continue;
+                rep(i,G[v].size()){
+                    edge &e = G[v][i];
+                    if(e.cap>0 && dist[e.to]>dist[v]+e.cost+h[v]-h[e.to]){
+                        dist[e.to] = dist[v]+e.cost+h[v]-h[e.to];
+                        prevv[e.to] = v;
+                        preve[e.to] = i;
+                        pq.push(pi(dist[e.to],e.to));
+                    }
                 }
             }
         }
