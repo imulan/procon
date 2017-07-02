@@ -11,8 +11,7 @@ int parent[MAX_V]; // DFSによって出来る木の親
 int lowest[MAX_V]; // DFS木において頂点i以下にあるmin(prenum)
 bool ap[MAX_V]; // 関節点かどうか
 
-void dfs(int u, int prev)
-{
+void dfs(int u, int prev){
     prenum[u] = timer;
     lowest[u] = timer;
     ++timer;
