@@ -9,7 +9,6 @@ int timer, root;
 int prenum[MAX_V]; // DFSの訪問順
 int parent[MAX_V]; // DFSによって出来る木の親
 int lowest[MAX_V]; // DFS木において頂点i以下にあるmin(prenum)
-
 bool ap[MAX_V]; // 関節点かどうか
 
 void dfs(int u, int prev)
@@ -21,34 +20,28 @@ void dfs(int u, int prev)
     vis[u] = true;
     int child = 0;
 
-    rep(i,G[u].size())
-    {
+    rep(i,G[u].size()){
         int v = G[u][i];
-        if(!vis[v])
-        {
+        if(!vis[v]){
             parent[v] = u;
             ++child;
             dfs(v,u);
             lowest[u] = min(lowest[u],lowest[v]);
         }
-        else if(u!=prev)
-        {
+        else if(u!=prev){
             lowest[u] = min(lowest[u], prenum[v]);
         }
     }
 
-    if(u==root)
-    {
+    if(u==root){
         if(child>=2) ap[u]=true;
     }
-    else
-    {
+    else{
         if(prev!=root && prenum[prev]<=lowest[u]) ap[prev]=true;
     }
 }
 
-void detect_ap(int _root)
-{
+void detect_ap(int _root){
     memset(vis,0,sizeof(vis));
     memset(ap,0,sizeof(ap));
 
