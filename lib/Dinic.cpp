@@ -8,8 +8,8 @@ int level[MAX_V]; // sからの距離
 int iter[MAX_V]; // どこまで調べ終わったか
 
 void add_edge(int from, int to, int cap){
-    G[from].pb({to,cap,G[to].size()});
-    G[to].pb({from,0,G[from].size()-1});
+    G[from].pb({to,cap,(int)G[to].size()});
+    G[to].pb({from,0,(int)G[from].size()-1});
 }
 
 void dinic_bfs(int s){
@@ -33,7 +33,7 @@ void dinic_bfs(int s){
 // 増加パスをdfsで探す
 int dinic_dfs(int v, int t, int f){
     if(v==t) return f;
-    for(int &i=iter[v]; i<G[v].size(); ++i){
+    for(int &i=iter[v]; i<(int)G[v].size(); ++i){
         edge &e=G[v][i];
         if(e.cap>0 && level[v]<level[e.to]){
             int d = dinic_dfs(e.to,t,min(f,e.cap));
