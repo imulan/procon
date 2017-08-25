@@ -14,7 +14,7 @@ const int MAX_V = 100000;
 
 struct edge{int to,cost;};
 vector<edge> g[MAX_V];
-int d[MAX_V]={};
+int d[MAX_V];
 
 int main()
 {
@@ -30,22 +30,18 @@ int main()
         g[y].pb({x,c});
     }
 
-    vector<bool> vis(n);
+    memset(d,-1,sizeof(d));
     queue<int> que;
     que.push(0);
-    vis[0]=true;
+    d[0] = 0;
     while(!que.empty())
     {
         int v = que.front();
         que.pop();
-        for(const auto &e:g[v])
+        for(const auto &e:g[v])if(d[e.to]<0)
         {
-            if(!vis[e.to])
-            {
-                d[e.to] = d[v]^e.cost;
-                que.push(e.to);
-                vis[e.to] = true;
-            }
+            d[e.to] = d[v]^e.cost;
+            que.push(e.to);
         }
     }
 
@@ -53,11 +49,7 @@ int main()
     rep(i,n) ++ct[d[i]];
 
     ll ans = 0;
-    rep(i,n)
-    {
-        int val = d[i]^X;
-        ans += ct[val];
-    }
+    rep(i,n) ans += ct[d[i]^X];
     if(X==0) ans -= n;
     printf("%lld\n", ans/2);
     return 0;
