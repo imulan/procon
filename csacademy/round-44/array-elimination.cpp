@@ -34,6 +34,12 @@ struct BIT{
             i += i & -i;
         }
     }
+
+    ll query(int l, int r)
+    {
+        if(r<l) swap(l,r);
+        return sum(r)-sum(l-1);
+    }
 };
 
 vector<int> comp(const vector<int> &a)
@@ -53,13 +59,6 @@ const int N = 100010;
 const ll INF = LLONG_MAX/3;
 vector<int> pos[N];
 
-BIT bit(N);
-ll query(int l, int r)
-{
-    if(r<l) swap(l,r);
-    return bit.sum(r)-bit.sum(l-1);
-}
-
 int main()
 {
     int n;
@@ -71,6 +70,7 @@ int main()
     rep(i,n+1) pos[a[i]].pb(i);
     int M = *max_element(all(a));
 
+    BIT bit(n+1);
     for(int i=1; i<=n; ++i) bit.add(i,1);
 
     ll dp[2]={};
@@ -85,7 +85,7 @@ int main()
         rep(j,2)rep(k,2)
         {
             // 移動ルート: p[j] -> nxp[k^1] -> nxp[k]
-            nx[k] = min(nx[k], dp[j]+query(p[j],nxp[k^1])+query(nxp[k^1],nxp[k]));
+            nx[k] = min(nx[k], dp[j]+bit.query(p[j],nxp[k^1])+bit.query(nxp[k^1],nxp[k]));
         }
 
         rep(j,2) dp[j] = nx[j];
