@@ -86,13 +86,11 @@ struct TwoSat{
         return true;
     }
 
-    // 真偽値bのリテラルを返す
-    vector<int> get_literals(bool b = true){
+    // リテラルの真偽値を返す
+    vector<bool> get_literals(){
         assert(calc());
-        vector<int> res;
-        rep(i,v){
-            if(b == (graph.cmp[i]>graph.cmp[v+i])) res.pb(i);
-        }
+        vector<bool> res(v);
+        rep(i,v) res[i] = (graph.cmp[i]>graph.cmp[v+i]);
         return res;
     }
 };
@@ -121,7 +119,6 @@ int main()
 
     rep(i,n-1)
     {
-        // dbg(i);
         int L = min(w[i].size(), w[i+1].size());
 
         int idx = 0;
@@ -162,9 +159,12 @@ int main()
         return 0;
     }
 
-    vector<int> ans = g.get_literals(false);
+    vector<int> ans;
+    vector<bool> L = g.get_literals();
+    rep(i,m)if(!L[i]) ans.pb(i+1);
+
     int A = ans.size();
     printf("Yes\n%d\n",A);
-    rep(i,A) printf("%d%c", ans[i]+1, (i==A-1)?'\n':' ');
+    rep(i,A) printf("%d%c", ans[i], (i==A-1)?'\n':' ');
     return 0;
 }
