@@ -1,35 +1,84 @@
-int V; // 頂点数 TODO:initialize
-const int MAX_V = ; // 最大長点数 TODO:insert
-vector<int> G[MAX_V]; // 隣接リスト表現
-vector<int> rG[MAX_V]; // 逆辺を張ったグラフ
-vector<int> vs; // 帰りがけ順の並び
-bool used[MAX_V]; // 既に調べたか
-int cmp[MAX_V]; //属する強連結成分トポロジカル順序
+struct SCC{
+    int V;
+    vector<vector<int>> G, rG;
+    vector<int> vs; // 帰りがけ順の並び
+    vector<int> cmp; //属する強連結成分トポロジカル順序
+    vector<bool> used;
 
-void add_edge(int from, int to){
-    G[from].push_back(to);
-    rG[to].push_back(from);
-}
+    SCC(){}
+    SCC(int n){
+        V = n;
+        G = vector<vector<int>>(n);
+        rG = vector<vector<int>>(n);
+    }
 
-void dfs(int v){
-    used[v] = true;
-    rep(i,G[v].size())if(!used[G[v][i]]) dfs(G[v][i]);
-    vs.push_back(v);
-}
+    void add_edge(int from, int to){
+        G[from].push_back(to);
+        rG[to].push_back(from);
+    }
 
-void rdfs(int v, int k){
-    used[v]=true;
-    cmp[v]=k;
-    rep(i,rG[v].size())if(!used[rG[v][i]]) rdfs(rG[v][i],k);
-}
+    void dfs(int v){
+        used[v] = true;
+        rep(i,G[v].size())if(!used[G[v][i]]) dfs(G[v][i]);
+        vs.push_back(v);
+    }
 
-int scc(){
-    memset(used,0,sizeof(used));
-    vs.clear();
-    rep(v,V)if(!used[v]) dfs(v);
+    void rdfs(int v, int k){
+        used[v]=true;
+        cmp[v]=k;
+        rep(i,rG[v].size())if(!used[rG[v][i]]) rdfs(rG[v][i],k);
+    }
 
-    memset(used,0,sizeof(used));
-    int k=0;
-    for(int i=vs.size()-1; i>=0; --i)if(!used[vs[i]]) rdfs(vs[i],k++);
-    return k;
-}
+    int scc(){
+        used = vector<bool>(V,false);
+        vs.clear();
+        rep(i,V)if(!used[i]) dfs(i);
+
+        used = vector<bool>(V,false);
+        cmp = vector<int>(V);
+        int num_scc = 0;
+        for(int i=vs.size()-1; i>=0; --i)if(!used[vs[i]]) rdfs(vs[i],num_scc++);
+        return num_scc;
+    }
+};
+
+struct TwoSat{
+    int v;
+    SCC graph;
+
+    // v literals
+    // 0~v-1: true
+    // v~2v-1: false
+
+    TwoSat(int num_literal){
+        v = num_literal;
+        graph = SCC(2*v);
+    }
+
+    inline int num(int id, bool b){
+        if(!b) return id+v;
+        return id;
+    }
+
+    void add_clause(int x, bool X, int y, bool Y){
+        graph.add_edge(num(x,!X), num(y,Y));
+        graph.add_edge(num(y,!Y), num(x,X));
+    }
+
+    // 割り当てが可能か調べる
+    bool calc(){
+        graph.scc();
+        rep(i,v)if(graph.cmp[i]==graph.cmp[v+i]) return false;
+        return true;
+    }
+
+    // 真偽値bのリテラルを返す
+    vector<int> get_literals(bool b = true){
+        assert(calc());
+        vector<int> res;
+        rep(i,v){
+            if(b == (graph.cmp[i]>graph.cmp[v+i])) res.pb(i);
+        }
+        return res;
+    }
+};
