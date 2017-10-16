@@ -55,7 +55,7 @@ struct TwoSat{
         graph = SCC(2*v);
     }
 
-    inline int num(int id, bool b){return id+(!b)*v;}
+    inline int num(int id, bool b){return id+(b?0:v);}
 
     void add_clause(int x, bool X, int y, bool Y){
         graph.add_edge(num(x,!X), num(y,Y));
