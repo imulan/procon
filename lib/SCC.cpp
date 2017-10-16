@@ -72,13 +72,11 @@ struct TwoSat{
         return true;
     }
 
-    // 真偽値bのリテラルを返す
-    vector<int> get_literals(bool b = true){
+    // リテラルの真偽値を返す
+    vector<bool> get_literals(){
         assert(calc());
-        vector<int> res;
-        rep(i,v){
-            if(b == (graph.cmp[i]>graph.cmp[v+i])) res.pb(i);
-        }
+        vector<bool> res(v);
+        rep(i,v) res[i] = (graph.cmp[i]>graph.cmp[v+i]);
         return res;
     }
 };
