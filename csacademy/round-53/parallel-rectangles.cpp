@@ -36,8 +36,7 @@ int main()
     vector<int> can;
     rep(i,N)if(X[i].size()>=2) can.pb(i);
 
-
-    ll ans = 0, a2 = 0;
+    ll ans = 0;
 
     map<pi,ll> ct;
     for(int x=1; x<N; ++x)
@@ -48,6 +47,7 @@ int main()
             rep(i,can.size())if(x!=can[i])
             {
                 int CAN_SZ = X[can[i]].size();
+                if(CAN_SZ>S && can[i]>x) continue;
 
                 int ii=0, xx=0;
                 int cnt_y = 0;
@@ -63,8 +63,7 @@ int main()
                     else ++ii;
                 }
 
-                if(CAN_SZ>S) a2 += C2(cnt_y);
-                else ans += C2(cnt_y);
+                ans += C2(cnt_y);
             }
         }
         else
@@ -74,7 +73,6 @@ int main()
     }
 
     for(const auto &t:ct) ans += C2(t.se);
-    ans += a2/2;
 
     cout << ans << endl;
     return 0;
