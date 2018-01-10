@@ -96,6 +96,7 @@ struct treap{
     void erase(int k){ root = erase(root, k); }
     node_t *find(int k){ return find(root,k); }
 
+    // circular shift (右端の値が左端に来て、それ以外が右に1つずつシフト)
     void shift(int l, int r){
         if(r-l==1) return;
         assert(l<r);
