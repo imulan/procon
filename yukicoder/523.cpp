@@ -10,21 +10,19 @@ using ll = long long;
 template<class T,class U> ostream& operator<<(ostream& o, const pair<T,U> &p){o<<"("<<p.fi<<","<<p.se<<")";return o;}
 template<class T> ostream& operator<<(ostream& o, const vector<T> &v){o<<"[";for(T t:v){o<<t<<",";}o<<"]";return o;}
 
-const ll mod=1e9+7;
+const ll mod = 1e9+7;
 
-ll mod_pow(ll x, ll n)
-{
-    ll pw[32]={};
-    pw[0]=x;
-    for(int i=1; i<32; ++i) pw[i]=(pw[i-1]*pw[i-1])%mod;
-
-    ll ret=1;
-    rep(i,32)if(n>>i&1) (ret*=pw[i])%=mod;
+inline ll mod_pow(ll x, ll n){
+    ll ret = 1;
+    while(n){
+        if(n&1) (ret *= x) %= mod;
+        (x*=x)%=mod;
+        n>>=1;
+    }
     return ret;
 }
 
-ll mod_inv(ll x)
-{
+inline ll mod_inv(ll x){
     return mod_pow(x,mod-2);
 }
 
@@ -36,7 +34,7 @@ int main()
     ll ans=1;
     for(int i=2; i<=2*n; ++i) (ans*=i)%=mod;
 
-    rep(i,n) (ans*=mod_inv(2))%=mod;
+    (ans *= mod_inv(mod_pow(2,n))) %= mod;
     cout << ans << endl;
     return 0;
 }
