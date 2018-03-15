@@ -22,7 +22,7 @@ struct HL_decomposition{
 
     void build(int root = 0){
         dfs(root, -1);
-        bfs(root);
+        dfs2(root);
     }
 
     void dfs(int cur, int pre){
@@ -41,11 +41,11 @@ struct HL_decomposition{
         }
     }
 
-    void bfs(int root){
+    void dfs2(int root){
         int k = 0;
-        queue<int> que({root});
+        stack<int> que({root});
         while(!que.empty()){
-            int cur = que.front();
+            int cur = que.top();
             que.pop();
             // curを先頭とするheavy-pathを処理
             for(int i=cur; i!=-1; i=heavy[i]){
