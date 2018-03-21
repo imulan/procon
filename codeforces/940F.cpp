@@ -22,7 +22,7 @@ vector<Query> ch_query;
 const int N = 200000;
 int ct[N]={}, sz[N]={};
 
-const int SZ = 2000;
+const int SZ = 2100;
 const int B = 60;
 
 using pi = pair<int,int>;
@@ -106,7 +106,7 @@ inline int calc(){
     return ret;
 }
 
-void solve(){
+int main(){
     int n,Q;
     scanf(" %d %d", &n, &Q);
     rep(i,n) scanf(" %d", &a[i]);
@@ -136,22 +136,18 @@ void solve(){
     sort(all(v));
     v.erase(unique(all(v)), v.end());
 
-    int V = v.size();
-    map<int,int> m;
-    rep(i,V) m[v[i]] = i;
-
     // 変換
-    rep(i,n) a[i] = m[a[i]];
+    rep(i,n) a[i] = lower_bound(all(v), a[i]) - v.begin();
     rep(i,ch_query.size()){
-        ch_query[i].x = m[ch_query[i].x];
-        ch_query[i].y = m[ch_query[i].y];
+        ch_query[i].x = lower_bound(all(v), ch_query[i].x) - v.begin();
+        ch_query[i].y = lower_bound(all(v), ch_query[i].y) - v.begin();
     }
 
+    // ブロックごとにクエリを分類
     int M = mex_query.size();
-    rep(i,M){
-        mx[(mex_query[i].t)/SZ][(mex_query[i].x)/SZ].insert({mex_query[i].y, i});
-    }
+    rep(i,M) mx[mex_query[i].t/SZ][mex_query[i].x/SZ].insert({mex_query[i].y, i});
 
+    // 実際にクエリを処理
     vector<int> ans(M);
     rep(i,B)rep(j,B){
         for(const auto &p:mx[i][j]){
@@ -173,9 +169,5 @@ void solve(){
     }
 
     rep(i,M) printf("%d\n", ans[i]);
-}
-
-int main(){
-    solve();
     return 0;
 }
