@@ -1,13 +1,13 @@
 struct MaxSegTree{
-    long n; vector<ll> dat;
+    int n; vector<ll> dat;
     //初期化
-    MaxSegTree(long _n){
+    MaxSegTree(int _n){
         n=1;
         while(n<_n) n*=2;
         dat=vector<ll>(2*n-1,LLONG_MIN);
     }
     //k番目(0-indexed)の値をaに変更
-    void update(long k, ll a){
+    void update(int k, ll a){
         k+=n-1;
         dat[k]=a;
         //更新
@@ -17,7 +17,7 @@ struct MaxSegTree{
         }
     }
     //内部的に投げられるクエリ
-    ll _query(long a, long b, long k, long l, long r){
+    ll _query(int a, int b, int k, int l, int r){
         if(r<=a || b<=l) return LLONG_MIN;
 
         if(a<=l && r<=b) return dat[k];
@@ -27,7 +27,7 @@ struct MaxSegTree{
         return max(vl,vr);
     }
     //[a,b)の最大値を求める
-    ll query(long a, long b){
+    ll query(int a, int b){
         return _query(a,b,0,0,n);
     }
 };
