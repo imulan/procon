@@ -44,6 +44,7 @@ int main(){
         rep(j,h) cin >>ms[i][j];
     }
 
+    queue<State> que;
     rep(i,N)rep(j,N)rep(k,2)rep(l,M) d[i][j][k][l] = INF;
 
     pi start, goal;
@@ -62,7 +63,13 @@ int main(){
         return ret;
     };
 
-    queue<State> que;
+    auto CHECK = [&](State c, State nc){
+        if(d[nc.y][nc.x][nc.f][nc.b] > d[c.y][c.x][c.f][c.b]+1){
+            d[nc.y][nc.x][nc.f][nc.b] = d[c.y][c.x][c.f][c.b]+1;
+            que.push({nc});
+        }
+    };
+
     d[start.fi][start.se][0][0] = 0;
     que.push({start.fi, start.se, 0, 0});
     while(!que.empty()){
@@ -73,10 +80,7 @@ int main(){
         if(m[c.y][c.x]=='|'){
             State nc(c);
             nc.f = !nc.f;
-            if(d[nc.y][nc.x][nc.f][nc.b] > d[c.y][c.x][c.f][c.b]+1){
-                d[nc.y][nc.x][nc.f][nc.b] = d[c.y][c.x][c.f][c.b]+1;
-                que.push({nc});
-            }
+            CHECK(c, nc);
         }
 
         // operate switch
@@ -85,11 +89,7 @@ int main(){
             State nc(c);
             nc.b ^= (1<<switch_num(m[c.y][c.x]));
             if(ms[sn][c.y][c.x] == '*') nc.f = !nc.f;
-
-            if(d[nc.y][nc.x][nc.f][nc.b] > d[c.y][c.x][c.f][c.b]+1){
-                d[nc.y][nc.x][nc.f][nc.b] = d[c.y][c.x][c.f][c.b]+1;
-                que.push({nc});
-            }
+            CHECK(c, nc);
         }
 
         // move adjacent
@@ -99,12 +99,7 @@ int main(){
             nc.x += dx[i];
             if(!IN(nc.y, nc.x) || m[nc.y][nc.x]=='#') continue;
 
-            if(m[nc.y][nc.x]=='|' || nc.f==FLOOR(nc.y,nc.x,nc.b)){
-                if(d[nc.y][nc.x][nc.f][nc.b] > d[c.y][c.x][c.f][c.b]+1){
-                    d[nc.y][nc.x][nc.f][nc.b] = d[c.y][c.x][c.f][c.b]+1;
-                    que.push({nc});
-                }
-            }
+            if(m[nc.y][nc.x]=='|' || nc.f==FLOOR(nc.y,nc.x,nc.b)) CHECK(c, nc);
         }
     }
 
