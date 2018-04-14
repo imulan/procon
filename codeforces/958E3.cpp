@@ -27,6 +27,7 @@ int main(){
             pts.pb({{x,y},{i,j}});
         }
     }
+    sort(all(pts));
 
     vector<int> ans(N);
 
@@ -36,7 +37,6 @@ int main(){
         vector<Point> p = que.front();
         que.pop();
         int n = p.size();
-        sort(all(p));
 
         // 基準点としてx座標最小の点を選ぶ
         Point b = p[0];
