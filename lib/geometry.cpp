@@ -10,6 +10,7 @@ using namespace std;
 typedef complex<double> Point;
 typedef pair<Point, Point> Line;
 typedef vector<Point> VP;
+const double PI = acos(-1);
 const double EPS = 1e-9; // 許容誤差^2
 const double INF = 1e9;
 #define X real()
@@ -31,6 +32,7 @@ double cross(Point a, Point b) {
 }
 
 // 点の進行方向
+// !!! 誤差に注意 !!! (掛け算したものとかなり小さいものを比べているので)
 int ccw(Point a, Point b, Point c) {
   b -= a;  c -= a;
   if (cross(b,c) >  EPS) return +1;  // counter clockwise
@@ -193,7 +195,7 @@ VP tangentPoints(Point a, double ar, Point p) {
   VP ps;
   double sin = ar / abs(p-a);
   if (!LE(sin, 1)) return ps;  // ここでNaNも弾かれる
-  double t = M_PI_2 - asin(min(sin, 1.0));
+  double t = PI/2 - asin(min(sin, 1.0));
   ps.push_back(                 a + (p-a)*polar(sin, t));
   if (!EQ(sin, 1)) ps.push_back(a + (p-a)*polar(sin, -t));
   return ps;
@@ -374,8 +376,8 @@ bool inPolygon(Point p,VP& ps){
   double sumAngle=0;
   rep(i,n){
     double t = arg(ps[(i+1)%n]-p)-arg(ps[i]-p);
-    while(t>+M_PI) t-=2*M_PI;
-    while(t<-M_PI) t+=2*M_PI;
+    while(t>+PI) t-=2*PI;
+    while(t<-PI) t+=2*PI;
     sumAngle += t;
   }
   return (abs(sumAngle) > 0.1);
@@ -422,8 +424,8 @@ pair<int, int> convexDiameter(const VP& ps) {
 // aからbへの回転角（中心(0,0)）[-pi,+pi]
 double angle(Point a,Point b){
   double t = arg(b)-arg(a);
-  while(t>+M_PI) t-=2*M_PI;
-  while(t<-M_PI) t+=2*M_PI;
+  while(t>+PI) t-=2*PI;
+  while(t<-PI) t+=2*PI;
   return t;
 }
 
@@ -440,7 +442,7 @@ double areaCC(Point a, double ar, Point b, double br) {
     return 0.0;
   } else if (d - abs(ar-br)<= EPS) {
     double r = min(ar,br);
-    return r * r * M_PI;
+    return r * r * PI;
   } else {
     double rc = (d*d + ar*ar - br*br) / (2*d);
     double theta = acos(rc / ar);
@@ -602,6 +604,17 @@ vector<Line> mergeSegments(vector<Line> segs) {
 }
 segs.resize(n);
 return segs;
+}
+
+
+// 線分ABをm:nに外分する点 (m≠nでないとだめ)
+Point ext_div(Point a, Point b, double m, double n){
+  return (a*(-n)+b*m)/(m-n);
+}
+
+// 点cを中心に、点pをthetaだけ回転
+Point rot(Point p, Point c, double theta){
+  return (p-c)*polar(1.0,theta) + c;
 }
 
 
