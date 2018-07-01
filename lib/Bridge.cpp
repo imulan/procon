@@ -4,7 +4,8 @@ typedef pair<int,int> edge;
 
 vector<vi> G;
 
-void bridge_dfs(int now, int from, vector<edge> &bridge, vector<vi> &bicomp, stack<int> &roots, stack<int> &S, vb &inS, vi &preord, int &pre_ct){
+void bridge_dfs(int now, int from, vector<edge> &bridge, vector<vi> &bicomp, stack<int> &roots,
+                stack<int> &S, vb &inS, vi &preord, int &pre_ct){
     preord[now] = pre_ct++;
     S.push(now); inS[now]=true;
     roots.push(now);
