@@ -118,7 +118,6 @@ struct SegTree{
             merge(dat[i],dat[2*i+1],dat[2*i+2]);
         }
     }
-
     //k番目(0-indexed)の値をaに変更
     void update(int k, int a){
         int idx = k;
@@ -143,12 +142,11 @@ struct SegTree{
         merge(ret,vl,vr);
         return ret;
     }
-    //[a,b)の最大値を求める
+    //[a,b)
     ll query(int a, int b){
         return _query(a,b,0,0,n).val;
     }
 };
-
 
 int main(){
     int n,m;
