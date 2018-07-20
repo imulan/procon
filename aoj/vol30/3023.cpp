@@ -10,47 +10,6 @@ using ll = long long;
 template<class T,class U> ostream& operator<<(ostream& o, const pair<T,U> &p){o<<"("<<p.fi<<","<<p.se<<")";return o;}
 template<class T> ostream& operator<<(ostream& o, const vector<T> &v){o<<"[";for(T t:v){o<<t<<",";}o<<"]";return o;}
 
-struct P{
-    int x,y;
-};
-
-using pp = pair<P,P>;
-
-P READ_P(){
-    int x,y;
-    cin >>x >>y;
-    return {x,y};
-}
-
-double calc_dist(P p, P q){
-    double X = abs(p.x-q.x);
-    double Y = abs(p.y-q.y);
-    return sqrt(X*X + Y*Y);
-}
-
-const int N = 15;
-const double INF = 1e8;
-
-double dist[N][N];
-
-double d[N][N];
-double dp[1<<N][N];
-
-void calc(int start, int n){
-    fill(dp[0],dp[1<<N],INF);
-    dp[1<<start][start] = 0;
-    rep(mask,1<<n){
-        rep(i,n)if(mask>>i&1){
-            rep(j,n)if(!(mask>>j&1)){
-                int nmask = mask|(1<<j);
-                dp[nmask][j] = min(dp[nmask][j], dp[mask][i]+dist[i][j]);
-            }
-        }
-    }
-
-    rep(i,n) d[start][i] = dp[(1<<n)-1][i];
-}
-
 struct SCC{
     int V;
     vector<vector<int>> G, rG;
@@ -131,27 +90,57 @@ struct TwoSat{
     }
 };
 
+struct P{
+    int x,y;
+    void READ(){
+        cin >>x >>y;
+    }
+};
+
+double calc_dist(P p, P q){
+    double X = abs(p.x-q.x);
+    double Y = abs(p.y-q.y);
+    return sqrt(X*X + Y*Y);
+}
+
+const int N = 15;
+const double INF = 1e6;
+
+double dist[N][N];
+
+double d[N][N];
+double dp[1<<N][N];
 double D[200][2][200][2];
+
+void calc(int start, int n){
+    fill(dp[0],dp[1<<N],INF);
+    dp[1<<start][start] = 0;
+    rep(mask,1<<n)rep(i,n)if(mask>>i&1){
+        rep(j,n)if(!(mask>>j&1)){
+            int nmask = mask|(1<<j);
+            dp[nmask][j] = min(dp[nmask][j], dp[mask][i]+dist[i][j]);
+        }
+    }
+    rep(i,n) d[start][i] = dp[(1<<n)-1][i];
+}
+
 
 int main(){
     int n,m;
     cin >>n >>m;
 
-    vector<vector<P>> store(n);
-    rep(i,n)rep(j,2) store[i].pb(READ_P());
-
+    vector<vector<P>> store(n,vector<P>(2));
     vector<P> factory(m);
-    rep(i,m) factory[i] = READ_P();
+    rep(i,n)rep(j,2) store[i][j].READ();
+    rep(i,m) factory[i].READ();
 
-    rep(i,m)rep(j,m) dist[i][j] = calc_dist(factory[i],factory[j]);
+    rep(i,m)rep(j,m) dist[i][j] = calc_dist(factory[i], factory[j]);
     rep(i,m) calc(i,m);
 
     rep(i,n)rep(j,i)rep(ii,2)rep(jj,2){
         double tt = INF;
         rep(from,m)rep(to,m){
-            double tmp = calc_dist(store[i][ii], factory[from]);
-            tmp += d[from][to];
-            tmp += calc_dist(factory[to], store[j][jj]);
+            double tmp = calc_dist(store[i][ii], factory[from]) + d[from][to] + calc_dist(factory[to], store[j][jj]);
             tt = min(tt,tmp);
         }
         D[i][ii][j][jj] = tt;
@@ -166,7 +155,7 @@ int main(){
     };
 
     double l=0, r=INF;
-    rep(_,60){
+    rep(_,50){
         double mid=(l+r)/2;
         if(valid(mid)) r=mid;
         else l=mid;
