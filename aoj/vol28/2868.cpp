@@ -1,0 +1,60 @@
+#include <bits/stdc++.h>
+using namespace std;
+using ll = long long;
+#define rep(i,n) for(int (i)=0;(i)<(int)(n);++(i))
+#define all(x) (x).begin(),(x).end()
+#define pb push_back
+#define fi first
+#define se second
+#define dbg(x) cout<<#x" = "<<((x))<<endl
+template<class T,class U> ostream& operator<<(ostream& o, const pair<T,U> &p){o<<"("<<p.fi<<","<<p.se<<")";return o;}
+template<class T> ostream& operator<<(ostream& o, const vector<T> &v){o<<"[";for(T t:v){o<<t<<",";}o<<"]";return o;}
+
+int main(){
+    int n;
+    cin >>n;
+    vector<int> a(n);
+    rep(i,n) cin >>a[i];
+
+    int p=0,m=0;
+    int o=0;
+    rep(i,n){
+        if(a[i]==2) ++p;
+        else if(a[i]==-2) ++m;
+        else if(a[i]==-1) ++o;
+    }
+
+    if(m%2==1){
+        if(o==0) --m;
+        else o=1;
+    }
+    else{
+        o = 0;
+    }
+
+    vector<int> ans;
+    rep(i,n){
+        if(a[i]==2){
+            if(p){
+                ans.pb(i+1);
+                --p;
+            }
+        }
+        else if(a[i]==-2){
+            if(m){
+                ans.pb(i+1);
+                --m;
+            }
+        }
+        else if(a[i]==-1){
+            if(o){
+                ans.pb(i+1);
+                --o;
+            }
+        }
+    }
+
+    cout << ans.size() << endl;
+    for(int i:ans) cout << i << endl;
+    return 0;
+}
