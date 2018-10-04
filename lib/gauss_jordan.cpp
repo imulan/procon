@@ -41,7 +41,7 @@ vec gauss_jordan(const mat &A, const vec &b){
 // 係数行列と拡大係数行列の階数が異なるときは不能
 // 係数行列と拡大係数行列の階数が等しく、係数行列の階数と変数の個数が異なるときは不定
 // 係数行列と拡大係数行列の階数と変数の個数がすべて等しいときは一意解が存在
-int rank(mat A){
+int mat_rank(mat A){
     const int R = A.size(), C = A[0].size();
     int ret = 0;
     for(int i=0; ret<R&&i<C; ++i){
@@ -55,7 +55,7 @@ int rank(mat A){
 
         for(int k=C-1; k>=i; --k) A[ret][k] /= A[ret][i];
         for(int j=ret+1; j<R; ++j){
-            for(int k=i; k<C; ++k) A[j][k] -= A[ret][k]*A[j][i];
+            for(int k=C-1; k>=i; --k) A[j][k] -= A[ret][k]*A[j][i];
         }
         ++ret;
     }
