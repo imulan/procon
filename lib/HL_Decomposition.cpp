@@ -68,3 +68,26 @@ struct HL_decomposition{
         }
     }
 };
+
+// example
+HL_decomposition hl;
+LazySegTree st;
+
+void _UPDATE(int p, int c, ll w){
+    while(1){
+        if(hl.head[p] == hl.head[c]){
+            st.update(hl.vid[p]+1, hl.vid[c]+1, w);
+            break;
+        }
+        else{
+            st.update(hl.vid[hl.head[c]], hl.vid[c]+1, w);
+            c = hl.par[hl.head[c]];
+        }
+    }
+}
+
+void UPDATE(int u, int v, ll w){
+    int x = hl.lca(u,v);
+    _UPDATE(x,u,w);
+    _UPDATE(x,v,w);
+}
