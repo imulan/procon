@@ -58,3 +58,18 @@ int max_flow(int s, int t){
         while((f=dinic_dfs(s,t,F_INF))>0) flow+=f;
     }
 }
+
+// 辺に対して最小流量の制約がある場合
+// u->v : 最大流量c, 最小流量b の 辺e について
+
+// 旧source(s),sink(t)
+// 新しいsource(S),sink(T)を作成
+// 辺の張り方
+// u->v : c-b / u->T : b / S->v : b
+// S->s : INF / t->T
+
+// 新しいグラフでの流量 maxflow(S,T) = F'
+// 元のグラフの最大流量 F = F' - Σb
+
+// 下限制約を満たせるとは限らない場合のチェック方法
+// S->s,t->Tを張る前に、 t->s:INFを張ってmax_flow(S,T) = Σbになることを確認する必要がある
