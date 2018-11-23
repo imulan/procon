@@ -15,9 +15,7 @@ const double EPS = 1e-9; // 許容誤差^2
 const double INF = 1e9;
 #define X real()
 #define Y imag()
-// #define LE(n,m) ((n) < (m) + EPS)
 #define LE(n,m) ((n) - (m) < EPS)
-// #define GE(n,m) ((n) + EPS > (m))
 #define GE(n,m) (EPS > (m) - (n))
 #define EQ(n,m) (abs((n)-(m)) < EPS)
 
@@ -79,7 +77,6 @@ bool isecSP(Point a1, Point a2, Point b) {
   return !ccw(a1, a2, b);
 }
 
-
 /* 距離　各直線・線分は縮退してはならない */
 
 // 点pの直線aへの射影点を返す
@@ -129,7 +126,6 @@ Point crosspointLL(Point a1, Point a2, Point b1, Point b2) {
   return a1 + d1/d2 * (a2-a1);
 }
 
-
 /* 円 */
 
 double distLC(Point a1, Point a2, Point c, double r) {
@@ -176,19 +172,6 @@ VP crosspointCC(Point a, double ar, Point b, double br) {
   if (!EQ(norm(abN), 0)) ps.push_back(cp - abN);
   return ps;
 }
-
-/*
-// 2円の交点(自作)
-VP crosspointCC(Point a, double ar, Point b, double br){
-  double d = abs(b-a);
-  if(abs(ar-br)>d || abs(ar+br)<d) return {};
-  double t = acos(double((d*d+ar*ar-br*br)/(2*d*ar)));
-  Point p1 = a+polar(ar,arg(b-a)+t);
-  Point p2 = a+polar(ar,arg(b-a)-t);
-  if(abs(p1-p2) < EPS) return {p1};
-  return {p1,p2};
-}
-*/
 
 // 点pから円aへの接線の接点
 VP tangentPoints(Point a, double ar, Point p) {
@@ -247,7 +230,6 @@ VP circlesPointsTangent(Point a, Point b, Point l1, Point l2) {
   double qb = -rC * dot(n,m);
   double qc = norm(n)*norm(m) - rC*rC;
   double qd = qb*qb - qa*qc;  // qa*k^2 + 2*qb*k + qc = 0
-
   VP cs;
   if (qd < -EPS) return cs;
   if (EQ(qa, 0)) {
@@ -279,14 +261,11 @@ Point minEnclosingCircle(const VP& ps) {
   return c;
 }
 
-
 /* 多角形 */
 
 // 頂点の順序（sortやmax_elementに必要）
 namespace std {
-  bool operator<(const Point a, const Point b) {
-    return a.X != b.X ? a.X < b.X : a.Y < b.Y;
-  }
+  bool operator<(const Point a, const Point b) { return a.X != b.X ? a.X < b.X : a.Y < b.Y; }
 }
 
 //多角形PSのi番目の辺
@@ -335,7 +314,6 @@ int inCcwConvex(const VP& ps, Point p) {
   Point g = (ps[0] + ps[n / 3] + ps[n*2 / 3]) / 3.0;
   if (g == p) return 1;
   Point gp = p - g;
-
   int l = 0, r = n;
   while (l + 1 < r) {
     int mid = (l + r) / 2;
@@ -370,7 +348,6 @@ int inPolygon(const VP& ps, Point p) {
   return in;
 }
 
-
 bool inPolygon(Point p,VP& ps){
   int n = ps.size();
   double sumAngle=0;
@@ -382,7 +359,6 @@ bool inPolygon(Point p,VP& ps){
   }
   return (abs(sumAngle) > 0.1);
 }
-
 
 //ベクトル(a1->a2)で凸多角形psを切断したときの
 //ベクトルの左側の凸多角形を返す
@@ -419,7 +395,6 @@ pair<int, int> convexDiameter(const VP& ps) {
   }
   return make_pair(maxI, maxJ);
 }
-
 
 // aからbへの回転角（中心(0,0)）[-pi,+pi]
 double angle(Point a,Point b){
@@ -466,7 +441,6 @@ double closestPair(VP& a,int l,int r) {
   double x = a[m].X;
   double d = min(closestPair(a,l,m),closestPair(a,m,r));
   inplace_merge(a.begin()+l, a.begin()+m, a.begin()+r, compY);
-
   VP b;
   for(int i=l;i<r;i++){
     if(abs(a[i].X - x)>=d)continue;
@@ -511,7 +485,6 @@ VP voronoiCell(Point p, const VP& ps, const VP& outer) {
 }
 
 /* 幾何グラフ */
-
 struct Edge {
   int from, to;
   double cost;
@@ -583,29 +556,25 @@ Graph visibilityGraph(const VP& ps, const vector<VP>& objs) {
   return gr;
 }
 
-
 /* その他 */
-
 // 重複する線分を併合する
 vector<Line> mergeSegments(vector<Line> segs) {
   int n = segs.size();
   rep (i,n) if (segs[i].second < segs[i].first) swap(segs[i].second, segs[i].first);
-
   rep (i,n) rep (j,i) {
     Line &l1 = segs[i], &l2 = segs[j];
     if (EQ(cross(l1.second-l1.first, l2.second-l2.first), 0)
       && isecLP(l1.first, l1.second, l2.first)
       && ccw   (l1.first, l1.second, l2.second) != 2
       && ccw   (l2.first, l2.second, l1.second) != 2) {
-      segs[j] = Line(min(l1.first, l2.first), max(l1.second, l2.second));
-    segs[i--] = segs[--n];
-    break;
+        segs[j] = Line(min(l1.first, l2.first), max(l1.second, l2.second));
+      segs[i--] = segs[--n];
+      break;
+    }
   }
+  segs.resize(n);
+  return segs;
 }
-segs.resize(n);
-return segs;
-}
-
 
 // 線分ABをm:nに外分する点 (m≠nでないとだめ)
 Point ext_div(Point a, Point b, double m, double n){
@@ -617,6 +586,10 @@ Point rot(Point p, Point c, double theta){
   return (p-c)*polar(1.0,theta) + c;
 }
 
+Point inner(Point a, Point b, Point c){
+  double A = abs(b-c), B = abs(c-a), C = abs(a-b);
+  return (A*a + B*b + C*c)*(1.0/(A+B+C));
+}
 
 // この辺にコードを載せるほどでもないが重要な定理とか図とか書いておくとよい気がします
 
