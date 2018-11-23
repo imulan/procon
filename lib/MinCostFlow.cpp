@@ -24,8 +24,7 @@ int min_cost_flow(int s, int t, int f, bool neg = false){
         priority_queue<pi,vector<pi>,greater<pi>> pq;
         fill(dist,dist+V,INF);
         dist[s]=0;
-        if(neg)
-        {
+        if(neg){
             // bellman-fordでhを更新
             neg = false;
             bool update;
@@ -45,8 +44,7 @@ int min_cost_flow(int s, int t, int f, bool neg = false){
                 }
             }while(update);
         }
-        else
-        {
+        else{
             // dijkstraでhを更新
             pq.push(pi(0,s));
             while(!pq.empty()){
@@ -68,7 +66,6 @@ int min_cost_flow(int s, int t, int f, bool neg = false){
 
         // これ以上流せない
         if(dist[t]==INF) return -1;
-
         rep(v,V) h[v] += dist[v];
 
         // s-t間の最短路に沿って目一杯流す
@@ -85,3 +82,28 @@ int min_cost_flow(int s, int t, int f, bool neg = false){
     }
     return res;
 }
+
+// 辺に最小流量制約がある場合
+// e(u->v)に対して、最大流量c、最小流量b、コストdのとき
+// e'(u->v)を用意して、
+// e:{cap:c-b, cost:d} / e':{cap:b, cost:d-M(十分に大きい数)}
+// としてからMCFを求め、それに M*Σb を足せば良い (d-Mが負になるかもしれないので注意)
+
+// グラフに負のコストの辺がある場合
+// ・ベルマンフォードを使う
+
+// ・使われる辺の個数が等しいとき：
+// それらのコストに適当なkを足して非負にしておき、あとでそれらを引く
+
+// ・流す流量Fが一定であるとき：
+// e(u->v): cap:c, cost:-dの辺に対して、
+
+// 旧source(s),sink(t)
+// 新しいsource(S),sink(T)を作成
+// 辺の張り方
+// v->u:{cap:c, cost:d} / u->T:{cap:c, cost:0} / S->v:{cap:c, cost:0}
+// S->s:{cap:F, cost:0} / t->T:{cap:F, cost:0}
+
+// このグラフに対して、
+// min_cost_flow(S,T,F+Σc(コスト負の辺)) + Σc*(-d)
+// がもとのグラフに対する最小費用流になる
