@@ -10,7 +10,7 @@ yamad:
 ryoissy:
   Convex Hull Trick / Radix Heap / Sparse Table / Treap / Lowest Common Ancestor / Diameter (by DP) / Find EulerPath(有向グラフ) / Graph_Bridge(橋・間接点検出, 二重辺連結成分分解) / Hungarian / 木の上に対するクエリの解き方 / LL(1)式構文解析パーサ(四則演算) / 数式を処理するセグメント木
 imulan:
-  geometry / Dinic / MinCostFlow / GlobalMinCut / SCC / TwoSat / 最小有向全域木 / HL分解 / TreeHash
+  geometry / Dinic / MinCostFlow / GlobalMinCut / SCC / TwoSat / 最小有向全域木 / HL分解 / TreeHash / スライド最大値 / Mo
 */
 
 //// gnu extension
@@ -929,6 +929,8 @@ ll largest_histogram(const vector<int>& H){ // ヒストグラムの最大面積
 // オイラーの多面体定理 ： 頂点の数 - 辺の数 + 面の数 = 2 - 2*(穴の数)
 // ケイリーの公式： n個のラベル付き頂点を持つ木の個数はn^(n-2)
 
+
+
 /* Convex Hull Trick
 this can get the minimum(maximum) value of lines(f_i(x)=ax+b)
 when query add and get is monotony(x1<=x2<=x3... or x1>=x2>=x3>=...
@@ -1696,6 +1698,12 @@ int main(void){
 	}
 	return 0;
 }
+
+
+
+
+
+
 
 
 
@@ -2778,4 +2786,80 @@ int tree_hash(int v, int par){
     sort(all(hs));
     if(!h2id.count(hs)) h2id[hs] = h2id.size();
     return h2id[hs];
+}
+
+/* スライド最大値 */
+// 実装例 : a[i]のなかからちょうどx個選んで、任意の長さkの区間に少なくとも1つは選ばれてないといけない
+vector<ll> dp(n,-INF);
+rep(i,k) dp[i] = a[i];
+rep(xxx,x-1){
+    vector<ll> nx(n,-INF);
+    deque<int> deq;
+    rep(i,n){
+        if(!deq.empty()) nx[i] = max(nx[i], dp[deq.front()]+a[i]);
+
+        while(!deq.empty() && dp[deq.back()]<=dp[i]) deq.pop_back();
+        deq.push_back(i);
+
+        if(i-k>=0 && deq.front() == i-k) deq.pop_front();
+    }
+    dp = nx;
+}
+
+/* Mo's algorithm */
+using pi = pair<int,int>;
+using P = pair<pi,int>;
+
+const int B = 320;
+const int Q = 100000;
+const int N = 100002;
+
+// ((R,L),qid)
+vector<P> query[B];
+ll ans[Q];
+
+int L=1, R=0;
+int ct[3*N]={};
+ll now = 0;
+
+void pr(){
+    ++R;
+    // Rに対する処理
+}
+
+void mr(){
+    // Rに対する処理
+    --R;
+}
+
+void pl(){
+    // Lに対する処理
+    ++L;
+}
+
+void ml(){
+    --L;
+    // Lに対する処理
+}
+
+// クエリを左端をキーにして平方分割
+int q;
+cin >>q;
+rep(i,q){
+    int l,r;
+    cin >>l >>r;
+    query[l/B].pb({{r,l},i});
+}
+
+rep(i,B){
+    sort(all(query[i]));
+
+    for(const auto &qq:query[i]){
+        int l = qq.fi.se, r = qq.fi.fi, qid = qq.se;
+        while(R<r) pr();
+        while(r<R) mr();
+        while(L<l) pl();
+        while(l<L) ml();
+        ans[qid] = now;
+    }
 }
