@@ -1,3 +1,5 @@
+alias g='g++-8 -O2 -std=c++14 -Wextra -W -Wshadow -fsanitize=undefined -fsanitize=address'
+
 #include <bits/stdc++.h>
 using namespace std;
 using ll = long long;
@@ -6,49 +8,11 @@ using ll = long long;
 
 /* INDEX
 yamad:
-  GNU extension
-  SA
-  LCP
-  Z algorithm
-  Aho Crasick
-  Rolling Hash
-  linear congruence equation
-  Matrix
-    gauss_jordan
-    det
-    mod_inv_matrix
-    getrank
-  euler_phi_list
-  FFT
-  Combination
-  UnionFind
-  BIT
-  BIT 2d
-  LazySegTree
-  ValueSegmentTree on Tree
-  centroid decomposition
+  GNU extension / SA / LCP / Z algorithm / Aho Crasick / Rolling Hash / linear congruence equation / Matrix ( gauss_jordan / det / mod_inv_matrix / getrank) / euler_phi_list / FFT / Combination / UnionFind / BIT / BIT 2d / LazySegTree / ValueSegmentTree on Tree / centroid decomposition
 ryoissy:
-  Convex Hull Trick
-  Radix Heap
-  Sparse Table
-  Treap
-  Lowest Common Ancestor
-  Diameter (by DP)
-  Find EulerPath(有向グラフ)
-  Graph_Bridge(橋・間接点検出, 二重辺連結成分分解)
-  Hungarian
-  木の上に対するクエリの解き方
-  LL(1)式構文解析パーサ(四則演算)
-  数式を処理するセグメント木
+  Convex Hull Trick / Radix Heap / Sparse Table / Treap / Lowest Common Ancestor / Diameter (by DP) / Find EulerPath(有向グラフ) / Graph_Bridge(橋・間接点検出, 二重辺連結成分分解) / Hungarian / 木の上に対するクエリの解き方 / LL(1)式構文解析パーサ(四則演算) / 数式を処理するセグメント木
 imulan:
-  geometry :
-  Dinic :
-  MinCostFlow :
-  GlobalMinCut :
-  SCC :
-  TwoSat :
-  最小有向全域木 :
-  HL分解 :
+  geometry / Dinic / MinCostFlow / GlobalMinCut / SCC / TwoSat / 最小有向全域木 / HL分解
 */
 
 //// gnu extension
@@ -884,7 +848,8 @@ struct CHTrick{
 	}
 };
 
-/* Radix Heap
+/* Radix Heap(最小値を返すバージョン)
+最大値を取りたい場合は(INT_MAX-値)を代入すれば復元できます
 This heap can be used for ""Nonnegative""integer""
 This make dijkstra more faster than usual heap for mincostflow
 push O(1)
@@ -901,6 +866,7 @@ struct RadixHeap{
 		if(x==0)return -1;
 		return 31-__builtin_clz(x);
 	}
+	// P(距離(優先度), 頂点)を代入する
 	void push(P p){
 		assert(last<=p.first);
 		sz++;
@@ -929,15 +895,18 @@ struct RadixHeap{
 	}
 };
 
-//sparse table
+//sparse table(更新がない時に超高速に動作するRMQ, 最大値を返す版)
+//最小値を求めたい場合はmaxをminに書き直して動作させる
 struct sparsetable{
 	static const int N=10;
 	int log_table[1<<N];
 	int table[N+1][1<<(N+1)];
 	sparsetable(){}
+	//座標xに値vを挿入する(maxを取っているので負の値が入らないので注意)
 	void update(int x,int v){
 		table[0][x]=max(table[0][x],v);
 	}
+	// updateが終わったら呼び出す
 	void construct(){
 		int v=0;
 		log_table[1]=0;
@@ -954,15 +923,15 @@ struct sparsetable{
 			}
 		}
 	}
+	// [l,r)に対して答えを返す
 	int query(int l,int r){
 		int len=log_table[r-l];
-		//printf("%d %d %d\n",l,r,len);
 		return max(table[len][l],table[len][r-(1<<len)]);
 	}
 };
 
-
-//treap
+//treap(imulanさんの実装に下記の変更を加えたもの)
+// 1. 乱数をmt()ではなxorを使って実装
 unsigned int y=11451419;
 int rand_int(int l=0,int r=11451419){
 	y=y^(y<<13);
@@ -1003,7 +972,7 @@ struct treap{
         	return update(r);
         }
     }
-    pair<node_t*, node_t*> split(node_t *t, int k){ // [0,k), [k,n)
+    pair<node_t*, node_t*> split(node_t *t, int k){ // [0,k), [k,n)に分割
     	if(!t) return {NULL,NULL};
     	if(k <= count(t->lch)){
     		pair<node_t*,node_t*> s = split(t->lch,k);
@@ -1037,6 +1006,27 @@ struct treap{
     void insert(int k, T val){ root = insert(root, k, val, rand_int()); }
     void erase(int k){ root = erase(root, k); }
     node_t *find(int k){ return find(root,k); }
+
+    // circular shift(右端の値が左端に来て、それ以外が右に1つずつシフト)
+    void shift(int l,int r){
+    	if(r-l==1)return;
+    	assert(l<r);
+    	auto sr=split(root,r);
+    	auto sl=split(sr.first,l);
+    	auto lr=split(sl.second,r-l-1);
+    	root=merge(merge(sl.first,merge(lr.second,lr.first)),sr.second);
+    }
+
+    //[l,r)
+    T min(int l,int r){
+    	assert(l<r);
+    	auto sr=split(root,r);
+    	auto sl=split(sr.first,l);
+    	auto lr=sl.second;
+    	T ret=min(lr);
+    	root=merge(merge(sl.first,lr),sr.second);
+    	return ret;
+    }
 };
 
 //lcatree
@@ -1394,8 +1384,6 @@ int expression(State &begin){
 //数式を処理するセグメント木(加算, 掛け算のみ), 値の変更には対応していない
 //単位元が無いライブラリなので使用時注意
 // verified by AOJ1630
-
-
 const int PLUS=-1;
 const int MUL=-2;
 class expr{
@@ -1494,7 +1482,6 @@ struct segtree{
 		expr er=query(a,b,k*2+2,mid,r);
 		if(mid<=a)return er;
 		if(b<=mid)return el;
-		//printf("%d %d %d %d %d %d (%lld,%lld,%lld),%d (%lld,%lld,%lld),%d\n",a,b,k,l,r,op[k],el.l,el.m,el.r,el.f?1:0,er.l,er.m,er.r,er.f?1:0);
 		return merge(el,er,op[k]);
 	}
 	ll getval(int l,int r){
@@ -1502,14 +1489,11 @@ struct segtree{
 		return min(INF,res.l+res.m+res.r);
 	}
 };
-
 segtree seg;
-
 ll n;
 string str;
 int pos=0;
 ll ans=0;
-
 // v {num, op, num, op, ...}
 ll solve2(vector<ll> v){
 	int m=v.size()/2+1;
@@ -1565,7 +1549,6 @@ int main(void){
 		scanf("%lld",&n);
 		if(n==0LL)break;
 		cin >> str;
-		//printf("%d\n",(int)str.size());
 		ans=0;
 		pos=0;
 		solve();
@@ -1657,8 +1640,9 @@ int main(void){
 
 
 
-
 /* geometry */
+// !!! 整数座標に書き換える時、EPS周りの=の有無に注意 !!!
+
 /* 基本要素 */
 typedef complex<double> Point;
 typedef pair<Point, Point> Line;
@@ -2257,11 +2241,9 @@ Point inner(Point a, Point b, Point c){
 // 多角形の頂点が全て格子点上にあり、内部に穴がないとき
 // S=i+b/2-1 (S:多角形の面積, i: 多角形の内部にある格子点の数, b: 辺上の格子点の数)
 
-
 /* Dinic */
 // (行き先,容量,逆辺)
 struct edge{ int to,cap,rev; };
-
 const int MAX_V = ; // TODO:initialize
 const int F_INF = ; // TODO:initialize
 vector<edge> G[MAX_V];
@@ -2272,7 +2254,6 @@ void add_edge(int from, int to, int cap){
     G[from].pb({to,cap,(int)G[to].size()});
     G[to].pb({from,0,(int)G[from].size()-1});
 }
-
 void dinic_bfs(int s){
     memset(level,-1,sizeof(level));
     queue<int> que;
@@ -2290,7 +2271,6 @@ void dinic_bfs(int s){
         }
     }
 }
-
 // 増加パスをdfsで探す
 int dinic_dfs(int v, int t, int f){
     if(v==t) return f;
@@ -2307,7 +2287,6 @@ int dinic_dfs(int v, int t, int f){
     }
     return 0;
 }
-
 // sからtへの最大流
 int max_flow(int s, int t){
     int flow = 0;
@@ -2360,12 +2339,15 @@ Wが赤でBが青だとINF円罰金
 Wが赤でCが青だとINF円罰金
 */
 
+// マッチングについて
+// 孤立点のないグラフに対し、 |最大マッチング| + |最小辺カバー| = |V|
+// |最大安定集合| + |最小点カバー| = |V|
+// ""二部グラフの場合には"" |最大マッチング| = |最小点カバー|
+
 /* MinCostFlow */
 using pi = pair<int,int>;
-
 // (行き先, 容量, コスト, 逆辺)
 struct edge{ int to,cap,cost,rev; };
-
 int V; // TODO:initialize
 const int MAX_V = ; // TODO:initialize
 const int INF = ; // TODO:initialize
@@ -2378,7 +2360,6 @@ void add_edge(int from, int to, int cap, int cost){
     G[from].pb({to,cap,cost,(int)G[to].size()});
     G[to].pb({from,0,-cost,(int)G[from].size()-1});
 }
-
 // sからtへの流量fの最小費用流(不可能なら-1)
 int min_cost_flow(int s, int t, int f, bool neg = false){
     int res = 0;
@@ -2430,7 +2411,6 @@ int min_cost_flow(int s, int t, int f, bool neg = false){
         // これ以上流せない
         if(dist[t]==INF) return -1;
         rep(v,V) h[v] += dist[v];
-
         // s-t間の最短路に沿って目一杯流す
         int d=f;
         for(int v=t; v!=s; v=prevv[v]) d = min(d,G[prevv[v]][preve[v]].cap);
@@ -2472,13 +2452,10 @@ int min_cost_flow(int s, int t, int f, bool neg = false){
 // がもとのグラフに対する最小費用流になる
 
 /* GlocalMinCut*/
-
 int V; // TODO:initialize
 const int MAX_V = ; // TODO:initialize
 const int G_INF = ; // TODO:initialize
-
 vector<vector<int>> G;
-
 // O(V^3)
 int global_min_cut(){
     int ret = G_INF;
@@ -2520,29 +2497,24 @@ struct SCC{
         G = vector<vector<int>>(n);
         rG = vector<vector<int>>(n);
     }
-
     void add_edge(int from, int to){
-        G[from].push_back(to);
-        rG[to].push_back(from);
+        G[from].pb(to);
+        rG[to].pb(from);
     }
-
     void dfs(int v){
         used[v] = true;
         rep(i,G[v].size())if(!used[G[v][i]]) dfs(G[v][i]);
         vs.push_back(v);
     }
-
     void rdfs(int v, int k){
         used[v]=true;
         cmp[v]=k;
         rep(i,rG[v].size())if(!used[rG[v][i]]) rdfs(rG[v][i],k);
     }
-
     int scc(){
         used = vector<bool>(V,false);
         vs.clear();
         rep(i,V)if(!used[i]) dfs(i);
-
         used = vector<bool>(V,false);
         cmp = vector<int>(V);
         int num_scc = 0;
@@ -2554,30 +2526,24 @@ struct SCC{
 struct TwoSat{
     int v;
     SCC graph;
-
     // v literals
     // 0~v-1: true
     // v~2v-1: false
-
     TwoSat(int num_literal){
         v = num_literal;
         graph = SCC(2*v);
     }
-
     inline int num(int id, bool b){return id+(b?0:v);}
-
     void add_clause(int x, bool X, int y, bool Y){
         graph.add_edge(num(x,!X), num(y,Y));
         graph.add_edge(num(y,!Y), num(x,X));
     }
-
     // 割り当てが可能か調べる
     bool calc(){
         graph.scc();
         rep(i,v)if(graph.cmp[i]==graph.cmp[v+i]) return false;
         return true;
     }
-
     // リテラルの真偽値を返す
     vector<bool> get_literals(){
         assert(calc());
@@ -2587,14 +2553,9 @@ struct TwoSat{
     }
 };
 
-// 最小有向全域木
-// O(VE)
-
-// (重み, u->v)
-using Edge = pair<ll,pair<int,int>>;
-
+// 最小有向全域木 O(VE)
+using Edge = pair<ll,pair<int,int>>; // (重み, u->v)
 const ll INF = LLONG_MAX/3;
-
 // 辺集合, 頂点数, 根
 ll Chu_Liu_Edmonds(const vector<Edge> es, int V, int root){
     // 頂点iに入ってくる辺(u->i)の中で、最小のコストの辺を管理 (コスト, u)
@@ -2614,18 +2575,14 @@ ll Chu_Liu_Edmonds(const vector<Edge> es, int V, int root){
     vector<bool> vis(V);
     rep(i,V){
         if(vis[i]) continue;
-
         vector<int> path;
         int now = i;
-
         while(now!=-1 && !vis[now]){
             vis[now] = true;
             path.pb(now);
-
             // 今張っている辺を逆方向にたどる
             now = mn[now].se;
         }
-
         if(now != -1){
             bool in_cycle = false;
             for(int j:path){
@@ -2635,7 +2592,6 @@ ll Chu_Liu_Edmonds(const vector<Edge> es, int V, int root){
                     in_cycle = true;
                     cycle[cc] = true;
                 }
-
                 if(!in_cycle) ++cc;
             }
             if(in_cycle) ++cc;
@@ -2645,39 +2601,24 @@ ll Chu_Liu_Edmonds(const vector<Edge> es, int V, int root){
             for(int j:path) cmp[j] = cc++;
         }
     }
-
     if(cc == V){
         // すべての頂点が違う連結成分に分かれたので 閉路なし
         ll ans = 0;
         rep(i,V) ans += mn[i].fi;
         return ans;
     }
-
     // 閉路分のコスト
     ll cycle_cost = 0;
-    rep(i,V){
-        if(i!=root && cycle[cmp[i]]) cycle_cost += mn[i].fi;
-    }
-
+    rep(i,V)if(i!=root && cycle[cmp[i]]) cycle_cost += mn[i].fi;
     // コストを再設定
     vector<Edge> nes;
     for(Edge e:es){
         int u = e.se.fi, v = e.se.se;
         int cu = cmp[u], cv = cmp[v];
-
-        if(cu == cv){
-            // 閉路内の辺は無視
-            continue;
-        }
-        else if(cycle[cv]){
-            // コストを再設定
-            nes.pb({e.fi - mn[v].fi, {cu,cv}});
-        }
-        else{
-            nes.pb({e.fi, {cu,cv}});
-        }
+        if(cu == cv) continue; // 閉路内の辺は無視
+        else if(cycle[cv]) nes.pb({e.fi - mn[v].fi, {cu,cv}}); // コストを再設定
+        else nes.pb({e.fi, {cu,cv}});
     }
-
     return cycle_cost + Chu_Liu_Edmonds(nes, cc, cmp[root]);
 };
 
@@ -2700,15 +2641,12 @@ struct HL_decomposition{
     HL_decomposition(int sz) : n(sz), G(n), vid(n), inv(n), depth(n), par(n), heavy(n,-1), head(n), sub(n) {}
 
     void add_edge(int u, int v){
-        G[u].push_back(v);
-        G[v].push_back(u);
+        G[u].pb(v); G[v].pb(u);
     }
-
     void build(int root = 0){
         dfs(root, -1);
         dfs2(root);
     }
-
     void dfs(int cur, int pre){
         par[cur] = pre;
         sub[cur] = 1;
@@ -2716,7 +2654,6 @@ struct HL_decomposition{
         for(int nx:G[cur])if(nx != pre){
             depth[nx] = depth[cur] + 1;
             dfs(nx, cur);
-
             sub[cur] += sub[nx];
             if(max_sub < sub[nx]){
                 max_sub = sub[nx];
@@ -2724,7 +2661,6 @@ struct HL_decomposition{
             }
         }
     }
-
     void dfs2(int root){
         int k = 0;
         stack<int> que({root});
@@ -2743,7 +2679,6 @@ struct HL_decomposition{
             }
         }
     }
-
     int lca(int u, int v){
         while(1){
             if(vid[u] > vid[v]) swap(u,v);
@@ -2756,7 +2691,6 @@ struct HL_decomposition{
 // example
 HL_decomposition hl;
 LazySegTree st;
-
 void _UPDATE(int p, int c, ll w){
     while(1){
         if(hl.head[p] == hl.head[c]){
@@ -2769,7 +2703,6 @@ void _UPDATE(int p, int c, ll w){
         }
     }
 }
-
 void UPDATE(int u, int v, ll w){
     int x = hl.lca(u,v);
     _UPDATE(x,u,w);
