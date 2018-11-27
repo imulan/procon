@@ -1,18 +1,16 @@
 alias g='g++-8 -O2 -std=c++14 -Wextra -W -Wshadow -fsanitize=undefined -fsanitize=address'
-
 #include <bits/stdc++.h>
 using namespace std;
 using ll = long long;
 #define rep(i,n) for(int (i)=0;(i)<(int)(n);++(i))
 #define all(x) (x).begin(),(x).end()
-
-/* INDEX
+/*  ----- INDEX -----
 yamad:
-  GNU extension / SA / LCP / Z algorithm / Aho Crasick / Rolling Hash / linear congruence equation / Matrix ( gauss_jordan / det / mod_inv_matrix / getrank) / euler_phi_list / FFT / Combination / UnionFind / BIT / BIT 2d / LazySegTree / ValueSegmentTree on Tree / centroid decomposition
+  GNU extension / SA / LCP / Z algorithm / Aho Crasick / Rolling Hash / linear congruence equation / Matrix ( gauss_jordan / det / mod_inv_matrix / getrank) / euler_phi_list / FFT / Combination / UnionFind / BIT / BIT 2d / LazySegTree / ValueSegmentTree on Tree / centroid decomposition / largest histogram
 ryoissy:
   Convex Hull Trick / Radix Heap / Sparse Table / Treap / Lowest Common Ancestor / Diameter (by DP) / Find EulerPath(有向グラフ) / Graph_Bridge(橋・間接点検出, 二重辺連結成分分解) / Hungarian / 木の上に対するクエリの解き方 / LL(1)式構文解析パーサ(四則演算) / 数式を処理するセグメント木
 imulan:
-  geometry / Dinic / MinCostFlow / GlobalMinCut / SCC / TwoSat / 最小有向全域木 / HL分解
+  geometry / Dinic / MinCostFlow / GlobalMinCut / SCC / TwoSat / 最小有向全域木 / HL分解 / TreeHash
 */
 
 //// gnu extension
@@ -31,6 +29,7 @@ find by order : s.find_by_order(hoge);
 other : same as set
 */
 
+//// SA
 int len,crtk;
 int ranks[MAX_N+1];
 int tmp[MAX_N+1];
@@ -62,6 +61,7 @@ vector<int> construct_sa(const string& s){
   return sa;
 }
 
+//// LCP
 vector<int> construct_lcp(const string& s,const vector<int>& sa){
   vector<int> lcp;
   int n=s.length(); lcp.resize(n+1);
@@ -82,6 +82,7 @@ vector<int> construct_lcp(const string& s,const vector<int>& sa){
   return lcp;
 }
 
+//// z algorithm
 vector<ll> z_algorithm(const string& S){
   const ll n=S.length();
   vector<ll> A(n);
@@ -98,6 +99,7 @@ vector<ll> z_algorithm(const string& S){
   return A;
 }
 
+//// Manacher
 int rad[2*MAX_N];
 P longest_palindrome(string s){ // -> (index,length)
   int n=s.length();
@@ -115,6 +117,7 @@ P longest_palindrome(string s){ // -> (index,length)
   return P(idx,len);
 }
 
+//// Aho Crasick
 class PMA {
   PMA* next[27];
   vector<int> matched;
@@ -169,13 +172,11 @@ public:
   PMA(vector<string>& p) {
     build(p);
   }
-
   /* find all substring mathing pattern */
   vector< vector<int> > match(string ss) {
     // trans
     vector<int> s;
     rep(i,ss.size())s.push_back(ss[i]-'a'+1);
-
     vector< vector<int> > idx(s.size());
     PMA* pma = this;
     rep(i, s.size()) {
@@ -187,42 +188,7 @@ public:
   }
 };
 
-using vl = vector<ll>;
-const vl base{1009,1021};
-const ll MOD = 1000000009;
-// const vl mod{1000000009,1000000007};
-
-// 2次元ハッシュ
-// sの各P*Q部分のハッシュを計算
-vector<vl> calc_hash(const vector<string> &s, int P, int Q){
-    int n = s.size(), m = s[0].size();
-    vector<vector<ll>> tmp(n,vl(m)), hash(n,vl(m));
-    ll t0 = 1;
-    rep(j,Q) (t0 *= base[0]) %= MOD;
-
-    // 行方向
-    rep(i,n){
-        ll e = 0;
-        rep(j,Q) e = (e*base[0] + s[i][j]) % MOD;
-
-        for(int j=0; j+Q<=m; ++j){
-            tmp[i][j] = e;
-            if(j+Q < m) e = (e*base[0] - (t0*s[i][j])%MOD + MOD + s[i][j+Q]) % MOD;
-        }
-    }
-    ll t1 = 1;
-    rep(i,P) (t1 *= base[1]) %= MOD;
-    for(int j=0; j+Q<=m; ++j){
-        ll e = 0;
-        rep(i,P) e = (e*base[1] + tmp[i][j]) % MOD;
-        for(int i=0; i+P<=n; ++i){
-            hash[i][j] = e;
-            if(i+P < n) e = (e*base[1] - (t1*tmp[i][j])%MOD + MOD + tmp[i+P][j]) % MOD;
-        }
-    }
-    return hash;
-}
-
+//// Rolling Hash
 struct RollingHash{
     static const int MD = 3;
     static const vector<ll> hash_base, hash_mod;
@@ -259,25 +225,61 @@ struct RollingHash{
 };
 const vector<ll> RollingHash::hash_base{1009,1021,1013};
 const vector<ll> RollingHash::hash_mod{1000000009,1000000007,1000000021};
+using vl = vector<ll>;
+const vl base{1009,1021};
+const ll MOD = 1000000009;
+// const vl mod{1000000009,1000000007};
 
-//// linear congruence equation -- not verified A[i]x=B[i] (mod M[i]) の解
-pair<int,int> linear_congruence(const vector<int>& A,const vector<int>& B,const vector<int>& M){
-  int x=0,m=1;
+// 2次元ハッシュ
+// sの各P*Q部分のハッシュを計算
+vector<vl> calc_hash(const vector<string> &s, int P, int Q){
+    int n = s.size(), m = s[0].size();
+    vector<vector<ll>> tmp(n,vl(m)), hash(n,vl(m));
+    ll t0 = 1;
+    rep(j,Q) (t0 *= base[0]) %= MOD;
 
-  for(int i=0;i<A.size();i++){
-    int a=A[i]*m,b=B[i]-A[i]*x,d=gcd(M[i],a);
-    if(b%d!=0)return make_pair(0,-1); // no answer
-    int t=b/d*mod_inverse(a/d,M[i]/d)%(M[i]/d);
+    // 行方向
+    rep(i,n){
+        ll e = 0;
+        rep(j,Q) e = (e*base[0] + s[i][j]) % MOD;
+
+        for(int j=0; j+Q<=m; ++j){
+            tmp[i][j] = e;
+            if(j+Q < m) e = (e*base[0] - (t0*s[i][j])%MOD + MOD + s[i][j+Q]) % MOD;
+        }
+    }
+    ll t1 = 1;
+    rep(i,P) (t1 *= base[1]) %= MOD;
+    for(int j=0; j+Q<=m; ++j){
+        ll e = 0;
+        rep(i,P) e = (e*base[1] + tmp[i][j]) % MOD;
+        for(int i=0; i+P<=n; ++i){
+            hash[i][j] = e;
+            if(i+P < n) e = (e*base[1] - (t1*tmp[i][j])%MOD + MOD + tmp[i+P][j]) % MOD;
+        }
+    }
+    return hash;
+}
+
+//// linear congruence equation A[i]x=B[i] (mod M[i]) の解 →中国剰余定理
+P linear_congruence(const vector<ll>& A,const vector<ll>& B,const vector<ll>& M){
+  ll x=0,m=1;
+
+  for(ll i=0;i<(ll)A.size();i++){
+    ll a=A[i]*m,b=B[i]-A[i]*x,d=__gcd(M[i],a);
+    if(b%d!=0)return P(0,-1); // no answer
+    ll t=b/d*mod_inverse(a/d,M[i]/d)%(M[i]/d);
     x=x+m*t;
     m*=M[i]/d;
+    x%=m;
+    if(x<m)(x+=m)%=m;
   }
-  return make_pair(x%m,m);
+  return P(x%m,m);
 }
 
 // Matrix
 // 冪の和を求めるのは　(A|0)
 // 　　　　　　　　　　(E|E) をかける
-
 typedef vector<double> vec;
 typedef vector<vec> mat;
 vec gauss_jordan(const mat& A,const vec& b){
@@ -384,7 +386,7 @@ int getrank(mat A,int mod) {
 }
 
 int euler[MAX_N];
-void euler_phi_list(){
+void euler_phi_list(){ // phi(n)=n*PI(pi-1/pi) (piは素因数、総積)
   for(int i=0;i<MAX_N;i++)euler[i]=i;
     for(int i=2;i<MAX_N;i++){
       if(euler[i]==i){
@@ -438,9 +440,9 @@ ll mod_sqrt(ll a,ll p) {
   return ret.first;
 }
 
-// not verified
+// lagrange interpol
 double lagrange_interpol(vector<double> x,vector<double> y,double x1){
-  double s1,s2,y1=0.0;
+  double y1=0.0;
   int n=x.size();
   for(int i=0;i<n;i++){
     double s1=1.0,s2=1.0;
@@ -458,6 +460,7 @@ double lagrange_interpol(vector<double> x,vector<double> y,double x1){
 //// FFT
 #define X real()
 #define Y imag()
+// for ntt (1012924417,5),(924844033,5)
 struct FFT {
   using C = complex< double >;
   const double PI = acos(-1);
@@ -475,10 +478,15 @@ struct FFT {
       rts.resize(N), rrts.resize(N);
       for(int i = 1; i < N; i <<= 1) {
         if(rts[i].size()) continue;
+        // int w = mod_pow(primitiveroot, (mod - 1) / (i * 2));
+        // int rw = inverse(w);
         rts[i].resize(i), rrts[i].resize(i);
+        // rts[i][0] = 1, rrts[i][0] = 1;
         for(int k = 0; k < i; k++) {
           rts[i][k] = polar(1.0, PI / i * k);
           rrts[i][k] = polar(1.0, -PI / i * k);
+          // rts[i][k] = mul(rts[i][k - 1], w);
+          // rrts[i][k] = mul(rrts[i][k - 1], rw);
         }
       }
     }
@@ -489,6 +497,7 @@ struct FFT {
           s = F[j + k];
           t = C(F[j + k + i].X * r[i][k].X - F[j + k + i].Y * r[i][k].Y,
                 F[j + k + i].X * r[i][k].Y + F[j + k + i].Y * r[i][k].X);
+          // t = mul(F[j + k + i], rev ? rrts[i][k] : rts[i][k]);
           F[j + k] = s + t, F[j + k + i] = s - t;
         }
       }
@@ -510,6 +519,25 @@ struct FFT {
   }
 };
 
+ll garner(vector<Pii> mr, int mod){
+    mr.emplace_back(mod, 0);
+
+    vector<ll> coffs(sz(mr), 1);
+    vector<ll> constants(sz(mr), 0);
+    FOR(i, sz(mr) - 1){
+        // coffs[i] * v + constants[i] == mr[i].second (mod mr[i].first) を解く
+        ll v = (mr[i].second - constants[i]) * mod_inv<ll>(coffs[i], mr[i].first) % mr[i].first;
+        if (v < 0) v += mr[i].first;
+
+        for (int j = i + 1; j < sz(mr); j++) {
+            (constants[j] += coffs[j] * v) %= mr[j].first;
+            (coffs[j] *= mr[i].first) %= mr[j].first;
+        }
+    }
+
+    return constants[sz(mr) - 1];
+}
+
 ll extgcd(ll a,ll b,ll& x,ll& y){
   ll d=a;
   if(b!=0){
@@ -528,7 +556,7 @@ ll mod_inverse(ll a,ll m){
 }
 
 ll fact[MAX_P];
-ll mod_fact(ll n,ll p,ll& e){ // O(logn)? <- preparation O(p)?
+ll mod_fact(ll n,ll p,ll& e){ // O(logn) <- preparation O(p)
   e=0;
   if(n==0)return 1;
   ll res=mod_fact(n/p,p,e);
@@ -543,6 +571,52 @@ ll mod_comb(ll n,ll k,ll p){
   ll a1=mod_fact(n,p,e1), a2=mod_fact(k,p,e2), a3=mod_fact(n-k,p,e3);
   if(e1>e2+e3)return 0;
   return a1*mod_inverse(a2*a3%p,p)%p;
+}
+
+// nCr mod p^q 素数べきmod
+void makeFF(int p, int q, vector<ll> &fact, vector<ll> &ifact){
+    ll PQ = 1;
+    rep(_,q) PQ*=p;
+
+    fact[0] = 1;
+    for(int i=1; i<=PQ; ++i){
+        if(i%p==0) fact[i] = fact[i-1];
+        else fact[i] = (fact[i-1]*i)%PQ;
+    }
+    rep(i,PQ+1) ifact[i] = mod_inverse(fact[i], PQ);
+}
+
+ll nCrModPowpq(ll n, ll r, int p, int q){
+    if(n<0 || r<0 || r>n) return 0;
+
+    ll PQ = 1;
+    rep(_,q) PQ*=p;
+
+    vector<ll> fact(PQ+1),ifact(PQ+1);
+    makeFF(p, q, fact, ifact);
+
+    ll z = n-r;
+
+    ll e0 = 0;
+    for(ll i=n/p; i>0; i/=p) e0 += i;
+    for(ll i=r/p; i>0; i/=p) e0 -= i;
+    for(ll i=z/p; i>0; i/=p) e0 -= i;
+
+    ll em = 0;
+    for(ll i=n/PQ; i>0; i/=p) em += i;
+    for(ll i=r/PQ; i>0; i/=p) em -= i;
+    for(ll i=z/PQ; i>0; i/=p) em -= i;
+
+    ll ret = 1;
+    while(n>0){
+        (ret *= fact[n%PQ]) %= PQ;
+        (ret *= ifact[r%PQ]) %= PQ;
+        (ret *= ifact[z%PQ]) %= PQ;
+        n /= p; r /= p; z /= p;
+    }
+    rep(_,e0) (ret *= p) %= PQ;
+    if(!(p==2 && q>=3) && (em&1)) ret = (PQ-ret)%PQ;
+    return ret;
 }
 
 //// calc starling2 n個のものをk個に分ける場合の数（グループを区別しない）
@@ -641,6 +715,7 @@ struct BIT2d{
   }
 };
 
+//// LazySegTree
 struct LazySegTree {
   vector<ll> seg, lazy;
   int size;
@@ -696,6 +771,44 @@ struct LazySegTree {
   }
   ll query(int a, int b) {
     return query(a, b, 0, 0, size);
+  }
+};
+
+// 領域木
+struct rangetree{
+  int size;
+  vector<vector<int> > dat;
+  rangetree(){}
+
+  void init(vector<int> nums){
+    int n=nums.size();
+    size=1;
+    while(size<n)size*=2;
+    dat.resize(size*2);
+
+    for(int i=0;i<size*2;i++)dat[i].clear();
+
+    for(int i=0;i<n;i++){
+      dat[i+size-1].push_back(nums[i]);
+    }
+
+    for(int i=size-2;i>=0;i--){
+      int lc=i*2+1,rc=i*2+2;
+      dat[i].resize(dat[lc].size()+dat[rc].size());
+      merge(dat[lc].begin(),dat[lc].end(),dat[rc].begin(),dat[rc].end(),dat[i].begin());
+    }
+  }
+
+  int query(int a,int b,int t,int k,int l,int r){
+    if(b<=l||r<=a)return 0;
+    if(a<=l&&r<=b){
+      return upper_bound(dat[k].begin(),dat[k].end(),t)-dat[k].begin();
+    }
+    return query(a,b,t,k*2+1,l,(l+r)/2)+query(a,b,t,k*2+2,(l+r)/2,r);
+  }
+
+  int query(int a,int b,int t){
+    return query(a,b,t,0,0,size);
   }
 };
 
@@ -785,9 +898,36 @@ void solve_subprob(ll v){ // main
   // conquer
 }
 
+ll largest_histogram(const vector<int>& H){ // ヒストグラムの最大面積：最大長方形はこれを各行にやる
+  int N=H.size();
+  vector<int> L(N),R(N); // 左にどこまで伸ばせるか、右にどこまで伸ばせるか (index)
+  stack<int> st;
+
+  for(int i=0;i<N;i++){
+    while(st.size()>0&&H[st.top()]>=H[i])st.pop();
+    L[i]=(st.size()==0?0:st.top()+1);
+    st.push(i);
+  }
+
+  while(st.size())st.pop();
+  for(int i=N-1;i>=0;i--){
+    while(st.size()>0&&H[st.top()]>=H[i])st.pop();
+    R[i]=(st.size()==0?N:st.top());
+    st.push(i);
+  }
+
+  ll res=0;
+  for(int i=0;i<N;i++)res=max(res,(ll)H[i]*(R[i]-L[i]));
+  return res;
+}
+
 // 典型漸化式
 // 重複組み合わせ：dp[i+1][j]=dp[i+1][j-1]+dp[i][j]-dp[i][j-a[i]-1]
 // 分割数：dp[i+1][j]=dp[i+1][j-i]+dp[i][j]
+// 完全順列：dp[n]=n*(dp[n-1]+dp[n-2])
+
+// オイラーの多面体定理 ： 頂点の数 - 辺の数 + 面の数 = 2 - 2*(穴の数)
+// ケイリーの公式： n個のラベル付き頂点を持つ木の個数はn^(n-2)
 
 /* Convex Hull Trick
 this can get the minimum(maximum) value of lines(f_i(x)=ax+b)
@@ -1556,87 +1696,6 @@ int main(void){
 	}
 	return 0;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -2707,4 +2766,16 @@ void UPDATE(int u, int v, ll w){
     int x = hl.lca(u,v);
     _UPDATE(x,u,w);
     _UPDATE(x,v,w);
+}
+
+/* Tree Hash */
+const int N = 100000;
+vector<int> G[N];
+map<vector<int>,int> h2id;
+int tree_hash(int v, int par){
+    vector<int> hs;
+    for(int ch:G[v])if(ch!=par) hs.pb(tree_hash(ch,v));
+    sort(all(hs));
+    if(!h2id.count(hs)) h2id[hs] = h2id.size();
+    return h2id[hs];
 }
