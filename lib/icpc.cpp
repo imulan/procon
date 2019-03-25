@@ -10,7 +10,7 @@ yamad:
 ryoissy:
   Convex Hull Trick / Radix Heap / Sparse Table / Treap / Lowest Common Ancestor / Diameter (by DP) / Find EulerPath(有向グラフ) / Graph_Bridge(橋・間接点検出, 二重辺連結成分分解) / Hungarian / 木の上に対するクエリの解き方 / LL(1)式構文解析パーサ(四則演算) / 数式を処理するセグメント木
 imulan:
-  geometry / Dinic / MinCostFlow / GlobalMinCut / SCC / TwoSat / 最小有向全域木 / HL分解 / TreeHash / スライド最大値 / Mo
+  geometry / Dinic / MinCostFlow / GlobalMinCut / SCC / TwoSat / 最小有向全域木 / HL分解 / TreeHash / スライド最大値 / Mo / li-chao tree
 */
 
 //// gnu extension
@@ -2518,6 +2518,11 @@ int min_cost_flow(int s, int t, int f, bool neg = false){
 // min_cost_flow(S,T,F+Σc(コスト負の辺)) + Σc*(-d)
 // がもとのグラフに対する最小費用流になる
 
+// 二部グラフの 最小頂点被覆 / 最大安定集合の復元:
+// 1. 残余グラフ上で、Sからdfsをして訪れることが出来る頂点にマーク
+// 2. 最小頂点被覆は T側のマーク済 + S側のマーク無 頂点
+// 3. 最大安定集合は T側のマーク無 + S側のマーク済 頂点
+
 /* GlocalMinCut*/
 int V; // TODO:initialize
 const int MAX_V = ; // TODO:initialize
@@ -2863,3 +2868,72 @@ rep(i,B){
         ans[qid] = now;
     }
 }
+
+// li-chao tree: get Maximum value of ax+b like CHT
+// usage example: CHTrick<ll,LLONG_MIN>
+// insert(T a,T b): insert ax+b, get(T x): get Maximum value of ax+b
+template<typename T, const T INF>
+class CHTrick{
+    struct line{
+        T a,b;
+        line(T aa=0,T bb=0){
+            a=aa;
+            b=bb;
+        }
+        T get(T x){
+            return a*x+b;
+        }
+    };
+    struct node{
+        line l;
+        node *lch,*rch;
+        node(line l1){
+            l=l1;
+            lch=nullptr;
+            rch=nullptr;
+        }
+        ~node(){
+            if(lch)delete lch;
+            if(rch)delete rch;
+        }
+    };
+private:
+    node *root;
+public:
+    CHTrick(): root(nullptr){}
+    ~CHTrick(){
+        if(root)delete root;
+    }
+    void insert(T a,T b){
+        line l(a,b);
+        root=modify(root,0,((int)pos.size())-1,l);
+    }
+    T get(T x)const{
+        int t=lower_bound(pos.begin(),pos.end(),x)-pos.begin();
+        return sub(root,0,((int)pos.size())-1,t);
+    }
+private:
+    node* modify(node *p,int lb,int ub,line& l){
+        if(!p)return new node(l);
+        if(p->l.get(pos[lb])>=l.get(pos[lb]) && p->l.get(pos[ub])>=l.get(pos[ub]))return p;
+        if(p->l.get(pos[lb])<=l.get(pos[lb]) && p->l.get(pos[ub])<=l.get(pos[ub])){
+            p->l=l;
+            return p;
+        }
+        int mid=(lb+ub)/2;
+        if(p->l.get(pos[mid])<l.get(pos[mid]))swap(p->l,l);
+        if(p->l.get(pos[lb])<=l.get(pos[lb])){
+            p->lch=modify(p->lch,lb,mid,l);
+        }else{
+            p->rch=modify(p->rch,mid+1,ub,l);
+        }
+        return p;
+    }
+    T sub(node *p,int lb,int ub,int t)const{
+        if(!p)return INF;
+        if(ub-lb==0)return p->l.get(pos[t]);
+        int mid=(lb+ub)/2;
+        if(t<=mid)return max(p->l.get(pos[t]),sub(p->lch,lb,mid,t));
+        return max(p->l.get(pos[t]),sub(p->rch,mid+1,ub,t));
+    }
+};
