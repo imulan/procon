@@ -2,6 +2,9 @@
 *.out
 *.txt
 *.class
+*.diff
+*.me
+*.sample
 .DS_Store
 
 /topcoder/SRM/**/*.html
