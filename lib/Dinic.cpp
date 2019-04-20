@@ -1,3 +1,5 @@
+/* Dinic */
+
 // (行き先,容量,逆辺)
 struct edge{ int to,cap,rev; };
 
@@ -55,7 +57,7 @@ int max_flow(int s, int t){
         if(level[t]<0) return flow;
         memset(iter,0,sizeof(iter));
         int f;
-        while((f=dinic_dfs(s,t,F_INF))>0) flow+=f;
+        while( (f=dinic_dfs(s,t,F_INF)) > 0 ) flow+=f;
     }
 }
 
@@ -73,3 +75,34 @@ int max_flow(int s, int t){
 
 // 下限制約を満たせるとは限らない場合のチェック方法
 // S->s,t->Tを張る前に、 t->s:INFを張ってmax_flow(S,T) = Σbになることを確認する必要がある
+
+/*
+"燃やす埋める"
+「Xが赤でYが青だとZ円罰金」
+X->Yに容量Zの辺を貼る
+
+「Xが赤 or 青だとZ円罰金」
+赤だと罰金:X->Tに容量Zの辺
+青だと罰金:S->Xに容量Zの辺
+
+「Xが赤でYが赤だとZ円報酬」
+新たな頂点Wを考える
+強制的にZ円もらう
+Wが青だとZ円罰金
+Wが赤でXが青だとINF円罰金
+Wが赤でYが青だとINF円罰金
+
+「Aが赤でBが赤でCが赤だとZ円報酬」
+これも同じ
+新たな頂点Wを考える
+強制的にZ円もらう
+Wが青だとZ円罰金
+Wが赤でAが青だとINF円罰金
+Wが赤でBが青だとINF円罰金
+Wが赤でCが青だとINF円罰金
+*/
+
+// マッチングについて
+// 孤立点のないグラフに対し、 |最大マッチング| + |最小辺カバー| = |V|
+// |最大安定集合| + |最小点カバー| = |V|
+// ""二部グラフの場合には"" |最大マッチング| = |最小点カバー|

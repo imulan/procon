@@ -1,3 +1,4 @@
+/* GlocalMinCut*/
 
 int V; // TODO:initialize
 const int MAX_V = ; // TODO:initialize
