@@ -10,6 +10,8 @@
 .idea
 .vscode
 
+cmake-build-debug
+
 /topcoder/SRM/**/*.html
 /topcoder/SRM/**/*.sample
 /topcoder/SRM/**/*.bak.0
