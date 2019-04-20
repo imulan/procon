@@ -5,7 +5,10 @@
 *.diff
 *.me
 *.sample
+
 .DS_Store
+.idea
+.vscode
 
 /topcoder/SRM/**/*.html
 /topcoder/SRM/**/*.sample
