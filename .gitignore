@@ -20,3 +20,6 @@ cmake-build-debug
 !/icpc/2016d/*.cpp
 /icpc/2016p/*
 !/icpc/2016p/*.cpp
+
+testing_tool.py
+interactive_runner.py
