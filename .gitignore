@@ -15,6 +15,8 @@ cmake-build-debug
 /topcoder/SRM/**/*.html
 /topcoder/SRM/**/*.sample
 /topcoder/SRM/**/*.bak.0
+ContestAppletProd7.2.jnlp
+Greed-2.0-RC-7.1.0.jar
 
 /icpc/2016d/*
 !/icpc/2016d/*.cpp
