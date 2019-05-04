@@ -17,13 +17,13 @@ using P = pair<ll,ll>;
 struct CHTrick{
 	deque<P> lines;
 	bool isMonoticX = false;
-	CHTrick(bool flag=false){
+	CHTrick(bool flag=true){
 		isMonoticX = flag;
 	}
 	// check whether line l2 is useless
 	// maybe overflow
 	bool check(P l1, P l2, P l3){
-		return (long double)(l3.second-l2.second)*(l2.first-l1.first) >= (long double)(l2.second-l1.second)*(l3.first-l2.first);
+		return (__int128)(l3.second-l2.second)*(l2.first-l1.first) >= (__int128)(l2.second-l1.second)*(l3.first-l2.first);
 	}
 	// add line(y=ax+b)
 	void add(ll a, ll b){
@@ -82,7 +82,7 @@ int main(){
     sort(all(v));
 
     ll ans = 0;
-    vector<CHTrick> cht(T+1, CHTrick(true));
+    vector<CHTrick> cht(T+1);
     rep(i,n){
         int idx = v[i].se;
 
