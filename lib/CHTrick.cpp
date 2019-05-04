@@ -1,3 +1,5 @@
+// 傾きが講義単調増加であることを仮定
+
 /* this can get the minimum(maximum) value of lines(f_i(x)=ax+b)
 when query add and get is monotony(x1<=x2<=x3... or x1>=x2>=x3>=...
 and a1<=a2<=a3... or a1>=a2>=a3...), you can use (isMonoticX=true) (O(N+Q))
@@ -17,7 +19,7 @@ struct CHTrick{
 	// add line(y=ax+b)
 	void add(ll a, ll b){
 		if(lines.size()>0 && lines.back().first==a){
-			// if you find maximum val, replace min to max
+			// for maximum val, replace min to max
 			b = min(b, lines.back().second);
 			lines.pop_back();
 		}
