@@ -71,37 +71,34 @@ struct CHTrick{
 
 int main(){
     int n,T;
-    cin >>n >>T;
+    scanf(" %d %d", &n, &T);
 
     vector<int> t(n),p(n),f(n);
     vector<pair<int,int>> v(n);
     rep(i,n){
-        cin >>t[i] >>p[i] >>f[i];
+        scanf(" %d %d %d", &t[i], &p[i], &f[i]);
         v[i] = {f[i], i};
     }
     sort(all(v));
 
     ll ans = 0;
     vector<CHTrick> cht(T+1, CHTrick(true));
-    for(const auto &pp:v){
-        int idx = pp.se;
+    rep(i,n){
+        int idx = v[i].se;
 
         vector<ll> dp(T+1, -INF);
         dp[t[idx]] = p[idx];
-
-        for(int j=T; j>=0; --j){
+        rep(j,T+1){
             int nj = j+t[idx];
             if(nj<=T){
                 ll vv = cht[j].get(f[idx]) + p[idx] - f[idx]*f[idx];
                 dp[nj] = max(dp[nj], vv);
             }
-        }
 
-        rep(j,T+1){
             if(dp[j] > -INF) cht[j].add(2*f[idx], dp[j]-f[idx]*f[idx]);
             ans = max(ans, dp[j]);
         }
     }
-    cout << ans << endl;
+    printf("%lld\n", ans);
     return 0;
 }
