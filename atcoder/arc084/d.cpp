@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 using ll = long long;
-#define rep(i,n) for(int (i)=0;(i)<(int)(n);++(i))
+#define rep(i,n) for(int i=0;i<(int)(n);++i)
 #define all(x) (x).begin(),(x).end()
 #define pb push_back
 #define fi first
@@ -10,66 +10,28 @@ using ll = long long;
 template<class T,class U> ostream& operator<<(ostream& o, const pair<T,U> &p){o<<"("<<p.fi<<","<<p.se<<")";return o;}
 template<class T> ostream& operator<<(ostream& o, const vector<T> &v){o<<"[";for(T t:v){o<<t<<",";}o<<"]";return o;}
 
-int f(ll x)
-{
-    int a = 0;
-    while(x>0)
-    {
-        a += x%10;
-        x/=10;
-    }
-    return a;
-}
+const int INF = 19191919;
 
-int check(int k)
-{
-    if(k==1) return 1;
-
-    int v = 1;
-    int step = 0;
-
-    vector<int> b(k,-1);
-
-    while(b[v]<0)
-    {
-        b[v] = step++;
-
-        v*=10;
-        v%=k;
-    }
-    dbg(b);
-
-    if(b[0]>=0) return 1;
-    if(b[k-1]>=0) return 2;
-
-    int ret = 110;
-    return ret;
-}
-
-void test()
-{
-    for(ll i=1; i<=20; ++i)
-    {
-        printf(" %d: %d\n", i,check(i));
-        if(i%100==0) dbg(i);
-
-        // if(check(i)!=calc(i))
-        // {
-        //     printf(" ans = %d  calc = %d\n", check(i), calc(i));
-        //     printf(" !!!! %d\n", i);
-        //     assert(false);
-        // }
-    }
-
-}
-
-int main()
-{
-    test();
-
-    ll k;
+int main(){
+    int k;
     cin >>k;
 
+    vector<int> d(k, INF);
+    d[1] = 1;
+    queue<int> que({1});
+    while(!que.empty()){
+        int v = que.front();
+        que.pop();
 
+        // +1 or *10
+        for(auto e:vector<pair<int,int>>({{v+1,1}, {v*10,0}})){
+            int nv = e.fi%k, cost = e.se;
+            if(d[nv] > d[v]+cost){
+                d[nv] = d[v]+cost;
+                que.push(nv);
+            }
+        }
+    }
+    cout << d[0] << endl;
     return 0;
 }
