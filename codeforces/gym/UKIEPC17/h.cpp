@@ -1,11 +1,14 @@
 #include <bits/stdc++.h>
 using namespace std;
 using ll = long long;
-#define rep(i,n) for(int (i)=0;(i)<(int)(n);++(i))
+#define rep(i,n) for(int i=0;i<(int)(n);++i)
 #define all(x) (x).begin(),(x).end()
 #define pb push_back
 #define fi first
 #define se second
+#define dbg(x) cout<<#x" = "<<((x))<<endl
+template<class T,class U> ostream& operator<<(ostream& o, const pair<T,U> &p){o<<"("<<p.fi<<","<<p.se<<")";return o;}
+template<class T> ostream& operator<<(ostream& o, const vector<T> &v){o<<"[";for(T t:v){o<<t<<",";}o<<"]";return o;}
 
 const vector<int> NG(1,-1);
 
@@ -25,49 +28,49 @@ vector<int> solve(){
         --v[i];
     }
 
-    vector<queue<int>> q(k-1);
-    rep(i,k-1){
-        int j=i+1;
-        queue<int> ord;
+    vector<int> sd(d);
+    sort(all(sd));
+    assert(d == sd);
 
-        int pi = v[i], pj = v[j];
-        while(pj<p-1){
-            while(pj<p-1 && d[pj+1]<=d[pi]+b){
-                ++pj;
-                ord.push(j);
+    vector<int> ret;
+    while(1){
+        bool upd = false;
+        for(int i=k-1; i>=0; --i){
+            if(v[i]==p-1) continue;
+            while(v[i]<p-1){
+                bool forward = true;
+                for(int j:{-1,1}){
+                    int nx = i+j;
+                    if(0<=nx && nx<k && v[nx]<p-1){
+                        int dist = abs(d[v[i]+1]-d[v[nx]]);
+                        if(!(dist<=b && dist>=max(a[i],a[nx]))){
+                            forward = false;
+                            break;
+                        }
+                    }
+                }
+
+                if(forward){
+                    // printf(" GO %d\n",i);
+                    upd = true;
+                    ret.pb(i);
+                    ++v[i];
+                }
+                else break;
             }
-            if(pj == p-1) break;
-
-            while(pi<pj && d[pj]-d[pi+1]>=max(a[i],a[j])){
-                ++pi;
-                ord.push(i);
-            }
         }
 
-        if(pj != p-1) return NG;
-        while(pi < p-1){
-            ++pi;
-            ord.push(i);
-        }
-
-        q[i] = ord;
-
-        printf(" -- %d\n",i);
-        while(!ord.empty()){
-            printf(" %d", ord.front());
-            ord.pop();
-        }
-        printf("\n");
+        if(!upd) break;
     }
 
-
-    return vector<int>(1,1);
+    rep(i,k)if(v[i]!=p-1) return NG;
+    return ret;
 }
 
 int main(){
     vector<int> v = solve();
     int n = v.size();
     if(v[0]==-1) printf("impossible\n");
-    else rep(i,n) printf("%d%c", v[i], " \n"[i==n-1]);
+    else rep(i,n) printf("%d%c", v[i]+1, " \n"[i==n-1]);
     return 0;
 }
