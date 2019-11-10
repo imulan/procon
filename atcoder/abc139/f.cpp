@@ -34,14 +34,21 @@ int main(){
 
     int V = v.size();
     ll ans = 0;
+
+    int j = 0;
+    ll x = 0, y = 0;
     rep(i,V){
-        ll x = 0, y = 0;
-        for(int j=i; j<V; ++j){
-            if(v[j].fi - v[i].fi > PI+EPS) break;
+        while(j<V && v[j].fi - v[i].fi < PI+EPS){
             x += v[j].se.fi;
             y += v[j].se.se;
+
             ans = max(ans, x*x+y*y);
+            ++j;
         }
+
+        x -= v[i].se.fi;
+        y -= v[i].se.se;
+        ans = max(ans, x*x+y*y);
     }
 
     printf("%.15f", sqrt(ans));
