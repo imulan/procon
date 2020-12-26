@@ -1,3 +1,8 @@
+# Remove files without file extension
+*
+!*/
+!*.*
+
 *.in
 *.out
 *.txt
@@ -25,3 +30,8 @@ Greed-2.0-RC-7.1.0.jar
 
 testing_tool.py
 interactive_runner.py
+
+
+# Added by cargo
+
+/target
